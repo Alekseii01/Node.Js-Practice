@@ -1,0 +1,55 @@
+:root {
+  --main-color: #2563eb;
+  --main-color-dark: #1e40af;
+  --main-color-light: #e0e7ff;
+  --main-bg-gradient: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  --text-main: #222;
+  --text-light: #fff;
+  --danger: #e53935;
+  --success: #388e3c;
+  --border-main: #b6c6e3;
+  --border-light: #e3e8f0;
+  --bg-light: #f8fafc;
+  --bg-white: #fff;
+  --bg-grey: #f3f6fb;
+  --bg-grey-dark: #e0e7ff;
+  --bg-success: #e8f5e9;
+  --bg-danger: #fff3f3;
+
+  --shadow-main: 0 6px 32px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.08);
+  --shadow-hover: 0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.10);
+  --shadow-card: 0 2px 12px rgba(37,99,235,0.07), 0 1.5px 4px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 18px rgba(37,99,235,0.13), 0 2px 8px rgba(0,0,0,0.08);
+
+  --border-radius-main: 18px;
+  --border-radius-card: 10px;
+  --border-radius-small: 6px;
+  --border-width: 1.5px;
+
+  --transition-main: .5s;
+  --transition-hover: 0.18s;
+
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+a {
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
