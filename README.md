@@ -5,8 +5,9 @@
 
 ### 1. Clone the repository
 ```sh
-git clone https://github.com/Alekseii01/Node.Js-Practice/tree/article-app
+git clone https://github.com/Alekseii01/Node.Js-Practice
 cd Node.Js-Practice
+git checkout article-app
 ```
 
 ### 2. Install dependencies and run (with script)
