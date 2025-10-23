@@ -5,7 +5,7 @@
 
 ### 1. Clone the repository
 ```sh
-git clone <your-repo-url>
+git clone https://github.com/Alekseii01/Node.Js-Practice/tree/article-app
 cd Node.Js-Practice
 ```
 
@@ -20,7 +20,7 @@ chmod +x setup_and_run.sh
 ```sh
 cd server
 npm install
-node index.js
+npm run start
 ```
 
 #### Frontend:
@@ -39,4 +39,8 @@ npm run dev
 - For FE: if needed, change the backend URL in `client/.env.dev`:
   ```
   VITE_API_URL=http://localhost:4000
+  ```
+- For BE: if needed, change the PORT for backend in `server/.env.dev`:
+  ```
+  VITE_API_PORT=4000
   ```
