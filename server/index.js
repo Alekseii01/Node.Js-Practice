@@ -5,7 +5,11 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = 4000;
+require('dotenv').config({ path: path.join(__dirname, '.env.dev'), quiet: true });
+const PORT = process.env.VITE_API_PORT || 3001;
+if (!process.env.VITE_API_PORT) {
+  console.warn('VITE_API_PORT is not set. Using default port 3001.');
+}
 const DATA_DIR = path.join(__dirname, 'data');
 
 app.use(
