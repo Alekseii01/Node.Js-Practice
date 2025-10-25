@@ -2,6 +2,7 @@
   --main-color: #2563eb;
   --main-color-dark: #1e40af;
   --main-color-light: #e0e7ff;
+  --main-color-required: #999;
   --main-bg-gradient: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
   --text-main: #222;
   --text-light: #fff;

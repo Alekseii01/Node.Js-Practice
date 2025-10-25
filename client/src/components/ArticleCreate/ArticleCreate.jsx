@@ -4,6 +4,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
+import { validateTitle, validateContent } from '../../utils/validation.js';
 import 'react-quill/dist/quill.snow.css';
 import './ArticleCreate.css';
 
@@ -12,6 +13,7 @@ function ArticleCreate() {
   const [content, setContent] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({ title: false, content: false });
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,8 +21,11 @@ function ArticleCreate() {
     setError(null);
     setSuccess(false);
 
-    if (!title.trim() || !content.trim()) {
-      setError('Title and Content are required.');
+    const hasTitleError = validateTitle(title);
+    const hasContentError = validateContent(content);
+    setErrors({ title: hasTitleError, content: hasContentError });
+
+    if (hasTitleError || hasContentError) {
       return;
     }
 
@@ -54,7 +59,14 @@ function ArticleCreate() {
           <label htmlFor="title">
             Title: <span className="required">required</span>
           </label>
-          <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className={errors.title ? 'error' : ''}
+          />
+          {errors.title && <p className="field-error">Title is required.</p>}
         </div>
         <div className="form-group">
           <label htmlFor="content">
@@ -65,7 +77,9 @@ function ArticleCreate() {
             value={content}
             onChange={setContent}
             placeholder="Write your article here..."
+            className={errors.content ? 'error' : ''}
           />
+          {errors.content && <p className="field-error">Content is required.</p>}
         </div>
         {error && <p className="error-message">{error}</p>}
         {success && (
