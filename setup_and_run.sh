@@ -7,10 +7,9 @@ if [ ! -d "node_modules" ]; then
   echo "Downloading dependencies for backend..."
   npm install
 fi
-npm run start
-cd ..
+npm run start &
 
-cd client
+cd ../client
 if [ ! -d "node_modules" ]; then
   echo "Downloading dependencies for frontend..."
   npm install
