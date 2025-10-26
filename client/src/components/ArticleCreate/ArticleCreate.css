@@ -47,7 +47,7 @@ label {
 input[type="text"] {
   padding: 10px 12px;
   border: 1.5px solid var(--border-main);
-  color: #111;
+  color: var(--text-main);
   border-radius: 6px;
   font-size: 1em;
   background: var(--bg-light);
@@ -87,7 +87,7 @@ input[type="text"]:focus {
   color: var(--danger);
   margin-top: 10px;
   font-weight: 500;
-  background: #fff3f3;
+  background: var(--bg-danger);
   border-left: 4px solid var(--danger);
   padding: 8px 14px;
   border-radius: 4px;
@@ -97,14 +97,14 @@ input[type="text"]:focus {
   color: var(--success);
   margin-top: 10px;
   font-weight: 500;
-  background: #e8f5e9;
+  background: var(--bg-success);
   border-left: 4px solid var(--success);
   padding: 8px 14px;
   border-radius: 4px;
 }
 
 .required {
-  color: var(--main-color-required);
+  color: var(--text-main);
   margin-left: 2px;
   font-size: 0.8em;
 }
@@ -122,13 +122,13 @@ input[type="text"]:focus {
 }
 
 input.error {
-  border: 1px solid red !important;
+  border: 1px solid var(--danger) !important;
 }
 
 .error .ql-editor {
-  border: 1px solid red !important;
+  border: 1px solid var(--danger) !important;
 }
 
 .error .ql-toolbar {
-  border: 1px solid red !important;
+  border: 1px solid var(--danger) !important;
 }

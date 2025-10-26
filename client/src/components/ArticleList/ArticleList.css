@@ -44,7 +44,7 @@
 }
 
 .article-item li {
-  color: #1a237e;
+  color: var(--main-color-dark);
   font-weight: 600;
   font-size: 1.13em;
   transition: color var(--transition-main);
