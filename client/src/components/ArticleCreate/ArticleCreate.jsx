@@ -9,35 +9,44 @@ import 'react-quill/dist/quill.snow.css';
 import './ArticleCreate.css';
 
 function ArticleCreate() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [formData, setFormData] = useState({ title: '', content: '' });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [errors, setErrors] = useState({ title: false, content: false });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  const validators = {
+    title: validateTitle,
+    content: validateContent,
+  };
+
+  const handleChange = (field) => (value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    const hasError = validators[field](value);
+    setErrors(prev => ({ ...prev, [field]: hasError }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
 
-    const hasTitleError = validateTitle(title);
-    const hasContentError = validateContent(content);
-    setErrors({ title: hasTitleError, content: hasContentError });
+    const newErrors = {};
+    for (const field in validators) {
+      newErrors[field] = validators[field](formData[field]);
+    }
+    setErrors(newErrors);
 
-    if (hasTitleError || hasContentError) {
+    if (Object.values(newErrors).some(Boolean)) {
       return;
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/articles`, {
-        title,
-        content,
-      });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/articles`, formData);
       console.log('Article created:', response.data);
       setSuccess(true);
-      setTitle('');
-      setContent('');
+      setFormData({ title: '', content: '' });
+      setErrors({});
       setTimeout(() => {
         navigate(`/article/${response.data.id}`);
       }, 1200);
@@ -62,8 +71,8 @@ function ArticleCreate() {
           <input
             type="text"
             id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={formData.title}
+            onChange={(e) => handleChange('title')(e.target.value)}
             className={errors.title ? 'error' : ''}
           />
           {errors.title && <p className="field-error">Title is required.</p>}
@@ -74,8 +83,8 @@ function ArticleCreate() {
           </label>
           <ReactQuill
             theme="snow"
-            value={content}
-            onChange={setContent}
+            value={formData.content}
+            onChange={handleChange('content')}
             placeholder="Write your article here..."
             className={errors.content ? 'error' : ''}
           />
