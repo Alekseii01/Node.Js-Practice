@@ -45,7 +45,6 @@ function ArticleCreate() {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/articles`, formData);
       console.log('Article created:', response.data);
       setSuccess(true);
-      setFormData({ title: '', content: '' });
       setErrors({});
       setTimeout(() => {
         navigate(`/article/${response.data.id}`);
