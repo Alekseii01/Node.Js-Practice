@@ -40,7 +40,7 @@ async function deleteArticleFile(id) {
     await fs.unlink(filePath);
   } catch (error) {
     if (error.code === 'ENOENT') {
-      return false; // File not found
+      return false;
     }
     throw error;
   }

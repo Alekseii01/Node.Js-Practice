@@ -6,7 +6,6 @@ const { ensureDataDirectory } = require('./article/service');
 
 const app = express();
 
-// Middleware
 app.use(
   cors({
     origin: '*',
@@ -16,10 +15,8 @@ app.use(
 );
 app.use(express.json());
 
-// Routes
 app.use('/articles', articlesRouter);
 
-// Ensure data directory exists
 ensureDataDirectory();
 
 module.exports = app;
