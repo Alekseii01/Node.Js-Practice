@@ -34,7 +34,8 @@ npm run dev
 ## Structure
 - `client/` — React app (frontend)
 - `server/` — Express server (backend)
-- `server/data/` — Sample articles (JSON)
+    * `server/article/` - Article API logic (controller, model, service)
+    * `server/article/data/` — Sample articles (JSON)
 
 ## Environment variables
 - For FE: if needed, change the backend URL in `client/.env.dev`:
