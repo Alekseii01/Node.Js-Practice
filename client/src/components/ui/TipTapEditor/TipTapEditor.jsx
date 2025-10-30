@@ -40,14 +40,14 @@ export default function TipTapEditor({ value = '', onChange = () => {}, placehol
     <div className={`tiptap-editor-root ${className}`}>
       <div className="tiptap-toolbar">
         <button type="button" onClick={() => setIsPreview((v) => !v)} className={`preview-toggle${isPreview ? ' active' : ''}`}>{isPreview ? 'Edit' : 'Preview'}</button>
+        <button type="button" onClick={() => editor && editor.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
+        <button type="button" onClick={() => editor && editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
+        <button type="button" onClick={() => editor && editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</button>
         <button type="button" onClick={() => editor && editor.chain().focus().toggleBold().run()}><strong>B</strong></button>
         <button type="button" onClick={() => editor && editor.chain().focus().toggleItalic().run()}><em>I</em></button>
         <button type="button" onClick={() => editor && editor.chain().focus().toggleUnderline().run()}><u>U</u></button>
         <button type="button" onClick={() => editor && editor.chain().focus().toggleBulletList().run()}>•</button>
         <button type="button" onClick={() => editor && editor.chain().focus().toggleOrderedList().run()}>1.</button>
-        <button type="button" onClick={() => editor && editor.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
-        <button type="button" onClick={() => editor && editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
-        <button type="button" onClick={() => editor && editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</button>
         <button type="button" onClick={() => editor && editor.chain().focus().undo().run()}>↺ Undo</button>
         <button type="button" onClick={() => editor && editor.chain().focus().redo().run()}>↻ Redo</button>
       </div>
