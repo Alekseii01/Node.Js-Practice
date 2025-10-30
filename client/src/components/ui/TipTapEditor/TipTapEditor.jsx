@@ -57,10 +57,10 @@ export default function TipTapEditor({ value = '', onChange = () => {}, placehol
         </div>
       ) : (
         <>
-          <EditorContent editor={editor} />
           {!editor?.getText() && !value && placeholder && (
             <div className="tiptap-placeholder">{placeholder}</div>
           )}
+          <EditorContent editor={editor} />
         </>
       )}
     </div>

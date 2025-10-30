@@ -139,7 +139,6 @@ function ArticleEdit() {
             <TipTapEditor
               value={formData.content}
               onChange={handleContentChange}
-              placeholder="Write your article here..."
             />
           </div>
           {errors.content && <p className="field-error">Content is required.</p>}

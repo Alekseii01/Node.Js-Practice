@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import Button from '../UI/Button/Button.jsx';
-import StatusMessage from '../ui/StatusMessage/StatusMessage.jsx';
+import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill';
+import TipTapEditor from '../UI/TipTapEditor/TipTapEditor.jsx';
 import { validateTitle, validateContent } from '../../utils/validation.js';
-import 'react-quill/dist/quill.snow.css';
 import './ArticleCreate.css';
 
 function ArticleCreate() {
@@ -85,11 +84,9 @@ function ArticleCreate() {
           <label htmlFor="content">
             Content: <span className="required">required</span>
           </label>
-          <ReactQuill
-            theme="snow"
+          <TipTapEditor
             value={formData.content}
             onChange={handleChange('content')}
-            placeholder="Write your article here..."
             className={errors.content ? 'error' : ''}
           />
           {errors.content && <p className="field-error">Content is required.</p>}
