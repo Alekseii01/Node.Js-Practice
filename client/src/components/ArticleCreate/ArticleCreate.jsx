@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Button from '../Button/Button.jsx';
-import { FaCheckCircle } from 'react-icons/fa';
+import Button from '../UI/Button/Button.jsx';
+import StatusMessage from '../ui/StatusMessage/StatusMessage.jsx';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
@@ -12,6 +12,7 @@ function ArticleCreate() {
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -30,6 +31,7 @@ function ArticleCreate() {
     e.preventDefault();
     setError(null);
     setSuccess(false);
+    setLoading(true);
 
     const newErrors = {};
     for (const field in validators) {
@@ -38,6 +40,7 @@ function ArticleCreate() {
     setErrors(newErrors);
 
     if (Object.values(newErrors).some(Boolean)) {
+      setLoading(false);
       return;
     }
 
@@ -56,6 +59,8 @@ function ArticleCreate() {
       } else {
         setError('Failed to create article. Please try again.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,13 +94,9 @@ function ArticleCreate() {
           />
           {errors.content && <p className="field-error">Content is required.</p>}
         </div>
-        {error && <p className="error-message">{error}</p>}
-        {success && (
-          <div className="success-message success-anim">
-            <FaCheckCircle className="checkmark" />
-            Article created successfully!
-          </div>
-        )}
+        {error && <StatusMessage status="error" message={error} />}
+        {loading && <StatusMessage status="loading" message="Creating article..." />}
+        {success && <StatusMessage status="success" message="Article created successfully!" />}
         <div className="btn-container">
           <Button type="Button" className="btn btn-secondary" onClick={() => navigate('/')}>
             Back to Articles

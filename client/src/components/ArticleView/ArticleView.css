@@ -7,3 +7,37 @@
   font-size: 1.08em;
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.article-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.icon {
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: color var(--transition-main);
+}
+
+.edit-icon {
+  color: var(--main-color);
+}
+
+.edit-icon:hover {
+  color: var(--main-color-dark);
+}
+
+.delete-icon {
+  color: var(--danger);
+}
+
+.delete-icon:hover {
+  color: var(--danger-dark);
+}
