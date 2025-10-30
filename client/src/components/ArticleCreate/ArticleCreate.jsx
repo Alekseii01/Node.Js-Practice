@@ -4,6 +4,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import TipTapEditor from '../UI/TipTapEditor/TipTapEditor.jsx';
+import StatusMessage from '../UI/StatusMessage/StatusMessage.jsx';
 import { validateTitle, validateContent } from '../../utils/validation.js';
 import './ArticleCreate.css';
 

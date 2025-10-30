@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Button from '../../components/UI/Button/Button.jsx';
-import StatusMessage from '../../components/ui/StatusMessage/StatusMessage.jsx';
+import StatusMessage from '../../components/UI/StatusMessage/StatusMessage.jsx';
 import TipTapEditor from '../UI/TipTapEditor/TipTapEditor.jsx';
 import { validateTitle, validateContent } from '../../utils/validation.js';
 import './ArticleEdit.css';
