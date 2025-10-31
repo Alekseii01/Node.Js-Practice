@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import Button from '../Button/Button.jsx';
+import Button from '../UI/Button/Button.jsx';
 import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill';
+import TipTapEditor from '../UI/TipTapEditor/TipTapEditor.jsx';
+import StatusMessage from '../UI/StatusMessage/StatusMessage.jsx';
 import { validateTitle, validateContent } from '../../utils/validation.js';
-import 'react-quill/dist/quill.snow.css';
 import './ArticleCreate.css';
 
 function ArticleCreate() {
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -30,6 +31,7 @@ function ArticleCreate() {
     e.preventDefault();
     setError(null);
     setSuccess(false);
+    setLoading(true);
 
     const newErrors = {};
     for (const field in validators) {
@@ -38,6 +40,7 @@ function ArticleCreate() {
     setErrors(newErrors);
 
     if (Object.values(newErrors).some(Boolean)) {
+      setLoading(false);
       return;
     }
 
@@ -56,6 +59,8 @@ function ArticleCreate() {
       } else {
         setError('Failed to create article. Please try again.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,22 +85,16 @@ function ArticleCreate() {
           <label htmlFor="content">
             Content: <span className="required">required</span>
           </label>
-          <ReactQuill
-            theme="snow"
+          <TipTapEditor
             value={formData.content}
             onChange={handleChange('content')}
-            placeholder="Write your article here..."
             className={errors.content ? 'error' : ''}
           />
           {errors.content && <p className="field-error">Content is required.</p>}
         </div>
-        {error && <p className="error-message">{error}</p>}
-        {success && (
-          <div className="success-message success-anim">
-            <FaCheckCircle className="checkmark" />
-            Article created successfully!
-          </div>
-        )}
+        {error && <StatusMessage status="error" message={error} />}
+        {loading && <StatusMessage status="loading" message="Creating article..." />}
+        {success && <StatusMessage status="success" message="Article created successfully!" />}
         <div className="btn-container">
           <Button type="Button" className="btn btn-secondary" onClick={() => navigate('/')}>
             Back to Articles

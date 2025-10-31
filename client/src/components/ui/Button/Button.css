@@ -48,11 +48,14 @@
   transition: opacity var(--transition-hover);
   pointer-events: none;
 }
-.btn-secondary:hover::after {
-  opacity: 1;
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
-.btn-secondary,
-.btn-secondary > * {
-  position: relative;
-  z-index: 1;
+.btn:disabled:hover {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+}
+.btn:disabled::after {
+  opacity: 0;
 }
