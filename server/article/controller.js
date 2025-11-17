@@ -1,10 +1,13 @@
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
+const fs = require('fs/promises');
 const {
   readArticleFile,
   writeArticleFile,
   deleteArticleFile,
   getAllArticleIds,
 } = require('./service');
+const { broadcastNotification } = require('../websocket/notificationService');
 
 async function getAllArticles(req, res) {
   try {
@@ -51,10 +54,21 @@ async function createArticle(req, res) {
   }
 
   const id = uuidv4();
-  const newArticle = { id, title: title.trim(), content: content.trim() };
+  const newArticle = { 
+    id, 
+    title: title.trim(), 
+    content: content.trim(),
+    attachments: [] 
+  };
 
   try {
     await writeArticleFile(id, newArticle);
+    
+    broadcastNotification('article_created', {
+      id: newArticle.id,
+      title: newArticle.title
+    });
+
     res
       .status(201)
       .json({
@@ -89,9 +103,16 @@ async function updateArticle(req, res) {
       id,
       title: title.trim(),
       content: content.trim(),
+      attachments: existingArticle.attachments || []
     };
 
     await writeArticleFile(id, updatedArticle);
+    
+    broadcastNotification('article_updated', {
+      id: updatedArticle.id,
+      title: updatedArticle.title
+    });
+
     res.json({
       id: updatedArticle.id,
       title: updatedArticle.title,
@@ -112,10 +133,104 @@ async function deleteArticle(req, res) {
       return res.status(404).json({ message: 'Article not found.' });
     }
 
+    broadcastNotification('article_deleted', { id });
+
     res.json({ message: 'Article deleted successfully.' });
   } catch (error) {
     console.error(`Error deleting article ${id}:`, error);
     res.status(500).json({ message: 'Failed to delete article.' });
+  }
+}
+
+async function uploadAttachment(req, res) {
+  const { id } = req.params;
+
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded.' });
+  }
+
+  try {
+    const article = await readArticleFile(id);
+    if (!article) {
+      await fs.unlink(req.file.path);
+      return res.status(404).json({ message: 'Article not found.' });
+    }
+
+    const attachment = {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+      uploadDate: new Date().toISOString()
+    };
+
+    if (!article.attachments) {
+      article.attachments = [];
+    }
+    article.attachments.push(attachment);
+
+    await writeArticleFile(id, article);
+
+    broadcastNotification('attachment_added', {
+      articleId: id,
+      articleTitle: article.title,
+      filename: attachment.originalName
+    });
+
+    res.status(201).json({
+      message: 'File uploaded successfully.',
+      attachment
+    });
+  } catch (error) {
+    console.error('Error uploading attachment:', error);
+    if (req.file) {
+      await fs.unlink(req.file.path).catch(console.error);
+    }
+    res.status(500).json({ message: 'Failed to upload file.' });
+  }
+}
+
+async function deleteAttachment(req, res) {
+  const { id, filename } = req.params;
+
+  try {
+    const article = await readArticleFile(id);
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found.' });
+    }
+
+    if (!article.attachments || article.attachments.length === 0) {
+      return res.status(404).json({ message: 'No attachments found.' });
+    }
+
+    const attachmentIndex = article.attachments.findIndex(
+      att => att.filename === filename
+    );
+
+    if (attachmentIndex === -1) {
+      return res.status(404).json({ message: 'Attachment not found.' });
+    }
+
+    const deletedAttachment = article.attachments[attachmentIndex];
+    article.attachments.splice(attachmentIndex, 1);
+
+    const filePath = path.join(__dirname, '..', 'uploads', filename);
+    await fs.unlink(filePath).catch(err => {
+      console.error('Error deleting file:', err);
+    });
+
+    await writeArticleFile(id, article);
+
+    broadcastNotification('attachment_removed', {
+      articleId: id,
+      articleTitle: article.title,
+      filename: deletedAttachment.originalName
+    });
+
+    res.json({ message: 'Attachment deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting attachment:', error);
+    res.status(500).json({ message: 'Failed to delete attachment.' });
   }
 }
 
@@ -125,4 +240,6 @@ module.exports = {
   createArticle,
   updateArticle,
   deleteArticle,
+  uploadAttachment,
+  deleteAttachment,
 };

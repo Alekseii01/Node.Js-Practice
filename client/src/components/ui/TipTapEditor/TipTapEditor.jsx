@@ -2,20 +2,18 @@ import React, { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import BulletList from '@tiptap/extension-bullet-list';
-import OrderedList from '@tiptap/extension-ordered-list';
-import Heading from '@tiptap/extension-heading';
 import './TipTapEditor.css';
 
 export default function TipTapEditor({ value = '', onChange = () => {}, placeholder = '', className = '' }) {
   const [isPreview, setIsPreview] = React.useState(false);
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
       Underline,
-      BulletList,
-      OrderedList,
-      Heading.configure({ levels: [1, 2, 3] }),
     ],
     content: value,
     editorProps: {
@@ -26,7 +24,7 @@ export default function TipTapEditor({ value = '', onChange = () => {}, placehol
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
-  });
+  }, []);
 
   React.useEffect(() => {
     if (!editor) return;
@@ -35,6 +33,14 @@ export default function TipTapEditor({ value = '', onChange = () => {}, placehol
       editor.commands.setContent(value || '');
     }
   }, [value, editor]);
+
+  React.useEffect(() => {
+    return () => {
+      if (editor) {
+        editor.destroy();
+      }
+    };
+  }, [editor]);
 
   return (
     <div className={`tiptap-editor-root ${className}`}>
