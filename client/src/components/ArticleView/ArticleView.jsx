@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Button from '../UI/Button/Button.jsx';
+import Button from '../ui/Button/Button.jsx';
 import axios from 'axios';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import ConfirmationDialog from '../UI/ConfirmationDialog/ConfirmationDialog.jsx';
+import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog.jsx';
+import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
 import './ArticleView.css';
 
 function ArticleView() {
@@ -29,6 +30,10 @@ function ArticleView() {
     };
     fetchArticle();
   }, [id]);
+
+  const handleAttachmentsChange = (newAttachments) => {
+    setArticle(prev => ({ ...prev, attachments: newAttachments }));
+  };
 
   const handleDeleteClick = () => {
     setShowDialog(true);
@@ -81,7 +86,16 @@ function ArticleView() {
           />
         </div>
       </div>
+
       <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }}></div>
+
+      <AttachmentManager
+        articleId={id}
+        attachments={article.attachments || []}
+        onAttachmentsChange={handleAttachmentsChange}
+        readOnly={true}
+      />
+
       <Button onClick={() => navigate('/')}>Back to Articles</Button>
       {showDialog && (
         <ConfirmationDialog

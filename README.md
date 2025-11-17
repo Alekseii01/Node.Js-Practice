@@ -1,4 +1,3 @@
-
 # Node.Js-Practice: Article App
 
 ## Quick Start
@@ -7,7 +6,7 @@
 ```sh
 git clone https://github.com/Alekseii01/Node.Js-Practice
 cd Node.Js-Practice
-git checkout article-app
+git checkout feature/attachments-&-notifications
 ```
 
 ### 2. Install dependencies and run (with script)
@@ -32,17 +31,25 @@ npm run dev
 ```
 
 ## Structure
-- `client/` — React app (frontend)
-- `server/` — Express server (backend)
-    * `server/article/` - Article API logic (controller, model, service)
-    * `server/article/data/` — Sample articles (JSON)
+- `client/` — React app (Vite, React Router, TipTap editor)
+- `server/` — Express server (WebSocket, Multer for uploads)
+  - `server/article/` - Article API logic (controller, model, service)
+  - `server/middleware/upload.js` - File upload configuration
+  - `server/websocket/notificationService.js` - WebSocket broadcasts
+  - `server/data/` — Article JSON files
+  - `server/uploads/` — Uploaded files
+
+## API
+- Articles: `GET/POST/PUT/DELETE /articles`
+- Attachments: `POST /articles/:id/attachments`, `DELETE /articles/:id/attachments/:filename`
+- Static files: `GET /uploads/:filename`
 
 ## Environment variables
-- For FE: if needed, change the backend URL in `client/.env.dev`:
+- **Frontend** (`client/.env.development`):
   ```
   VITE_API_URL=http://localhost:4000
   ```
-- For BE: if needed, change the PORT for backend in `server/.env.dev`:
+- **Backend** (`server/.env`):
   ```
-  VITE_API_PORT=4000
+  PORT=4000
   ```
