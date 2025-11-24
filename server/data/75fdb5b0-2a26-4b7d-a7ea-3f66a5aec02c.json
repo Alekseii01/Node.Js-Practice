@@ -1,6 +1,0 @@
-{
-  "id": "75fdb5b0-2a26-4b7d-a7ea-3f66a5aec02c",
-  "title": "List test",
-  "content": "<p><strong>Unordered list:</strong></p><ul><li><p>Item A</p></li><li><p>Item B</p></li><li><p>Item C</p></li></ul><p><strong>Ordered list:</strong></p><ol><li><p>Step One</p></li><li><p>Step Two</p></li><li><p>Step Three</p></li></ol><p></p>",
-  "attachments": []
-}
