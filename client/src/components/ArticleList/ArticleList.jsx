@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Button from '../UI/Button/Button';
+import Button from '../ui/Button/Button';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import ConfirmationDialog from '../UI/ConfirmationDialog/ConfirmationDialog';
+import { FaTrash, FaEdit } from 'react-icons/fa';
+import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog';
 import './ArticleList.css';
 
 function ArticleList() {

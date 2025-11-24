@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Button from '../../components/UI/Button/Button.jsx';
-import StatusMessage from '../../components/UI/StatusMessage/StatusMessage.jsx';
-import TipTapEditor from '../UI/TipTapEditor/TipTapEditor.jsx';
+import Button from '../../components/ui/Button/Button.jsx';
+import StatusMessage from '../../components/ui/StatusMessage/StatusMessage.jsx';
+import TipTapEditor from '../ui/TipTapEditor/TipTapEditor.jsx';
+import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
 import { validateTitle, validateContent } from '../../utils/validation.js';
 import './ArticleEdit.css';
 
@@ -13,6 +14,7 @@ function ArticleEdit() {
 
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [originalData, setOriginalData] = useState({ title: '', content: '' });
+  const [attachments, setAttachments] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,7 @@ function ArticleEdit() {
         const data = { title: response.data.title || '', content: response.data.content || '' };
         setFormData(data);
         setOriginalData(data);
+        setAttachments(response.data.attachments || []);
       } catch (err) {
         console.error(`Error fetching article ${id}:`, err);
         setError('Failed to load article for editing.');
@@ -143,6 +146,13 @@ function ArticleEdit() {
           </div>
           {errors.content && <p className="field-error">Content is required.</p>}
         </div>
+
+        <AttachmentManager
+          articleId={id}
+          attachments={attachments}
+          onAttachmentsChange={setAttachments}
+          readOnly={false}
+        />
 
         {error && <StatusMessage status="error" message={error} />}
         {loading && <StatusMessage status="loading" message="Updating article..." />}
