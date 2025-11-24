@@ -1,56 +1,55 @@
-const fs = require('fs/promises');
-const path = require('path');
-
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const Article = require('../models/Article');
 
 async function ensureDataDirectory() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    console.log('Data directory ensured.');
-  } catch (error) {
-    console.error('Failed to ensure data directory:', error);
-  }
+  console.log('Using PostgreSQL database for article storage.');
 }
 
 async function readArticleFile(id) {
-  const filePath = path.join(DATA_DIR, `${id}.json`);
   try {
-    const data = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
+    const article = await Article.findByPk(id);
+    if (!article) {
       return null;
     }
+    return article.toJSON();
+  } catch (error) {
     throw error;
   }
 }
 
-async function writeArticleFile(id, article) {
-  const filePath = path.join(DATA_DIR, `${id}.json`);
+async function writeArticleFile(id, articleData) {
   try {
-    await fs.writeFile(filePath, JSON.stringify(article, null, 2), 'utf8');
+    const [article, created] = await Article.upsert({
+      id,
+      title: articleData.title,
+      content: articleData.content,
+      attachments: articleData.attachments || []
+    }, {
+      returning: true
+    });
+    return article;
   } catch (error) {
     throw error;
   }
 }
 
 async function deleteArticleFile(id) {
-  const filePath = path.join(DATA_DIR, `${id}.json`);
   try {
-    await fs.unlink(filePath);
+    const deleted = await Article.destroy({
+      where: { id }
+    });
+    return deleted > 0;
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      return false;
-    }
     throw error;
   }
-  return true;
 }
 
 async function getAllArticleIds() {
   try {
-    const files = await fs.readdir(DATA_DIR);
-    return files.filter(file => file.endsWith('.json')).map(file => path.basename(file, '.json'));
+    const articles = await Article.findAll({
+      attributes: ['id'],
+      raw: true
+    });
+    return articles.map(article => article.id);
   } catch (error) {
     throw error;
   }

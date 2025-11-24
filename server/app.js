@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const articlesRouter = require('./article/index');
-const { ensureDataDirectory } = require('./article/service');
+const sequelize = require('./models/index');
 
 const app = express();
 
@@ -19,6 +19,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/articles', articlesRouter);
 
-ensureDataDirectory();
+sequelize.authenticate()
+  .then(() => {
+    console.log('PostgreSQL database connection established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 module.exports = app;
