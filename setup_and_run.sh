@@ -35,6 +35,17 @@ fi
 echo "Running database migrations..."
 npx sequelize-cli db:migrate
 
+echo "Seeding default workspaces..."
+psql -U "$DB_USER" -d "$DB_NAME" -c "INSERT INTO workspaces (id, name, description, created_at, updated_at) 
+SELECT gen_random_uuid(), 'Personal', 'Personal articles and notes', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM workspaces WHERE name = 'Personal')
+UNION ALL
+SELECT gen_random_uuid(), 'Work', 'Work-related documents', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM workspaces WHERE name = 'Work')
+UNION ALL
+SELECT gen_random_uuid(), 'Projects', 'Project documentation', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM workspaces WHERE name = 'Projects');" 2>/dev/null || echo "Workspace seeding skipped (may already exist)"
+
 echo "Starting backend server..."
 npm run start &
 BACKEND_PID=$!
