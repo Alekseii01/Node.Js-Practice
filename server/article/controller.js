@@ -11,11 +11,16 @@ const { broadcastNotification } = require('../websocket/notificationService');
 
 async function getAllArticles(req, res) {
   try {
-    const ids = await getAllArticleIds();
+    const { workspace_id } = req.query;
+    const ids = await getAllArticleIds(workspace_id);
     const articlePromises = ids.map(async (id) => {
       const article = await readArticleFile(id);
       if (article) {
-        return { id: article.id, title: article.title };
+        return { 
+          id: article.id, 
+          title: article.title,
+          workspace_id: article.workspace_id 
+        };
       }
       return null;
     });
@@ -44,7 +49,7 @@ async function getArticleById(req, res) {
 }
 
 async function createArticle(req, res) {
-  const { title, content } = req.body;
+  const { title, content, workspace_id } = req.body;
 
   if (!title || title.trim() === '') {
     return res.status(400).json({ message: 'Title is required.' });
@@ -58,7 +63,8 @@ async function createArticle(req, res) {
     id, 
     title: title.trim(), 
     content: content.trim(),
-    attachments: [] 
+    attachments: [],
+    workspace_id: workspace_id || null
   };
 
   try {
@@ -66,7 +72,8 @@ async function createArticle(req, res) {
     
     broadcastNotification('article_created', {
       id: newArticle.id,
-      title: newArticle.title
+      title: newArticle.title,
+      workspace_id: newArticle.workspace_id
     });
 
     res
@@ -84,7 +91,7 @@ async function createArticle(req, res) {
 
 async function updateArticle(req, res) {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, workspace_id } = req.body;
 
   if (!title || title.trim() === '') {
     return res.status(400).json({ message: 'Title is required.' });
@@ -103,7 +110,8 @@ async function updateArticle(req, res) {
       id,
       title: title.trim(),
       content: content.trim(),
-      attachments: existingArticle.attachments || []
+      attachments: existingArticle.attachments || [],
+      workspace_id: workspace_id !== undefined ? workspace_id : existingArticle.workspace_id
     };
 
     await writeArticleFile(id, updatedArticle);

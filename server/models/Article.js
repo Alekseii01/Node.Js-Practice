@@ -34,6 +34,15 @@ const Article = sequelize.define('Article', {
     type: DataTypes.JSON,
     defaultValue: [],
     allowNull: false
+  },
+  workspace_id: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'workspaces',
+      key: 'id'
+    },
+    onDelete: 'SET NULL'
   }
 }, {
   tableName: 'articles',

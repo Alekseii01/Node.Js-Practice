@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../ui/Button/Button.jsx';
 import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
@@ -10,13 +10,27 @@ import { validateTitle, validateContent } from '../../utils/validation.js';
 import './ArticleCreate.css';
 
 function ArticleCreate() {
-  const [formData, setFormData] = useState({ title: '', content: '' });
+  const [formData, setFormData] = useState({ title: '', content: '', workspace_id: null });
   const [attachments, setAttachments] = useState([]);
+  const [workspaces, setWorkspaces] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchWorkspaces();
+  }, []);
+
+  const fetchWorkspaces = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/workspaces`);
+      setWorkspaces(response.data);
+    } catch (err) {
+      console.error('Error fetching workspaces:', err);
+    }
+  };
 
   const validators = {
     title: validateTitle,
@@ -25,7 +39,7 @@ function ArticleCreate() {
 
   const handleChange = (field) => (value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    const hasError = validators[field](value);
+    const hasError = validators[field] ? validators[field](value) : null;
     setErrors(prev => ({ ...prev, [field]: hasError }));
   };
 
@@ -104,6 +118,22 @@ function ArticleCreate() {
             className={errors.title ? 'error' : ''}
           />
           {errors.title && <p className="field-error">Title is required.</p>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="workspace">Workspace:</label>
+          <select
+            id="workspace"
+            className="workspace-select"
+            value={formData.workspace_id || ''}
+            onChange={(e) => handleChange('workspace_id')(e.target.value || null)}
+          >
+            <option value="">No Workspace</option>
+            {workspaces.map((workspace) => (
+              <option key={workspace.id} value={workspace.id}>
+                {workspace.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="form-group">
           <label htmlFor="content">
