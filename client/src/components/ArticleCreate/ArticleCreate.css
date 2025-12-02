@@ -25,18 +25,6 @@
   }
 }
 
-.workspace-select {
-  font-family: 'Poppins', sans-serif;
-  width: 100%;
-  border: 1.5px solid var(--border-main);
-  border-radius: 6px;
-  font-size: 1em;
-  color: var(--text-main);
-  background: var(--bg-light);
-  transition: border 0.15s;
-  margin-bottom: 15px;
-}
-
 .article-form {
   margin-top: 18px;
   display: flex;

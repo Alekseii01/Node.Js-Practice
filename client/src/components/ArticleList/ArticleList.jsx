@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog';
-import WorkspaceSelector from '../WorkspaceSelector/WorkspaceSelector';
 import './ArticleList.css';
 
 function ArticleList() {
@@ -12,14 +11,10 @@ function ArticleList() {
   const [error, setError] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [selectedWorkspace, setSelectedWorkspace] = useState(null);
 
   const fetchArticles = async () => {
     try {
-      const url = selectedWorkspace
-        ? `${import.meta.env.VITE_API_URL}/articles?workspace_id=${selectedWorkspace}`
-        : `${import.meta.env.VITE_API_URL}/articles`;
-      const response = await axios.get(url);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/articles`);
       setArticles(response.data);
     } catch (err) {
       console.error('Error fetching articles:', err);
@@ -29,7 +24,7 @@ function ArticleList() {
 
   useEffect(() => {
     fetchArticles();
-  }, [selectedWorkspace]);
+  }, []);
 
   const handleDeleteClick = (id) => {
     setDeleteId(id);
@@ -58,10 +53,6 @@ function ArticleList() {
   return (
     <div className="container">
       <h2>All Articles</h2>
-      <WorkspaceSelector
-        selectedWorkspace={selectedWorkspace}
-        onWorkspaceChange={setSelectedWorkspace}
-      />
       {error && <p className="error-message">{error}</p>}
       {Array.isArray(articles) ? (
         articles.length === 0 && !error ? (

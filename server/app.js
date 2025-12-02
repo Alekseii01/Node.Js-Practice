@@ -2,9 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const articlesRouter = require('./article/index');
-const commentsRouter = require('./comment/index');
-const workspacesRouter = require('./workspace/index');
-const { sequelize } = require('./models/associations');
+const sequelize = require('./models/index');
 
 const app = express();
 
@@ -20,9 +18,6 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/articles', articlesRouter);
-app.use('/articles', commentsRouter);
-app.use('/comments', commentsRouter);
-app.use('/workspaces', workspacesRouter);
 
 sequelize.authenticate()
   .then(() => {

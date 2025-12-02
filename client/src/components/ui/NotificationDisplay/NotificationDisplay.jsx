@@ -38,24 +38,6 @@ function NotificationDisplay() {
           title: 'Attachment Removed',
           message: `File "${notification.data.filename}" was removed from "${notification.data.articleTitle}".`
         };
-      case 'comment_added':
-        return {
-          icon: <FaCheckCircle className="notification-icon" />,
-          title: 'Comment Added',
-          message: `A new comment was added to "${notification.data.articleTitle}".`
-        };
-      case 'comment_deleted':
-        return {
-          icon: <FaTrash className="notification-icon" />,
-          title: 'Comment Deleted',
-          message: `A comment was deleted from "${notification.data.articleTitle}".`
-        };
-      case 'comment_updated':
-        return {
-          icon: <FaEdit className="notification-icon" />,
-          title: 'Comment Updated',
-          message: `A comment was updated.`
-        };
       default:
         return {
           icon: <FaBell className="notification-icon" />,
