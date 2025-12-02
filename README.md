@@ -72,11 +72,11 @@ npm run dev
 - Static files: `GET /uploads/:filename`
 
 ## Environment variables
-- **Frontend** (`client/.env.development`):
+- **Frontend** (`client/.env.dev`):
   ```
   VITE_API_URL=http://localhost:4000
   ```
-- **Backend** (`server/.env`):
+- **Backend** (`server/.env.dev`):
   ```
   PORT=4000
   DB_HOST=127.0.0.1
