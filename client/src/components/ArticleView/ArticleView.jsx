@@ -5,6 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog.jsx';
 import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
+import CommentList from '../CommentList/CommentList.jsx';
 import './ArticleView.css';
 
 function ArticleView() {
@@ -33,6 +34,52 @@ function ArticleView() {
 
   const handleAttachmentsChange = (newAttachments) => {
     setArticle(prev => ({ ...prev, attachments: newAttachments }));
+  };
+
+  const handleAddComment = async (commentData) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/articles/${id}/comments`,
+        commentData
+      );
+      setArticle(prev => ({
+        ...prev,
+        comments: [response.data.comment, ...(prev.comments || [])]
+      }));
+    } catch (err) {
+      console.error('Error adding comment:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/comments/${commentId}`);
+      setArticle(prev => ({
+        ...prev,
+        comments: prev.comments.filter(c => c.id !== commentId)
+      }));
+    } catch (err) {
+      console.error('Error deleting comment:', err);
+    }
+  };
+
+  const handleEditComment = async (commentId, commentData) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/comments/${commentId}`,
+        commentData
+      );
+      setArticle(prev => ({
+        ...prev,
+        comments: prev.comments.map(c => 
+          c.id === commentId ? response.data.comment : c
+        )
+      }));
+    } catch (err) {
+      console.error('Error editing comment:', err);
+      throw err;
+    }
   };
 
   const handleDeleteClick = () => {
@@ -94,6 +141,14 @@ function ArticleView() {
         attachments={article.attachments || []}
         onAttachmentsChange={handleAttachmentsChange}
         readOnly={true}
+      />
+
+      <CommentList
+        articleId={id}
+        comments={article.comments || []}
+        onAddComment={handleAddComment}
+        onDeleteComment={handleDeleteComment}
+        onEditComment={handleEditComment}
       />
 
       <Button onClick={() => navigate('/')}>Back to Articles</Button>

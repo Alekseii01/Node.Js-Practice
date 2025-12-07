@@ -40,6 +40,30 @@
   border-left-color: #9c27b0;
 }
 
+.notification.comment_added,
+.notification.comment_deleted,
+.notification.comment_updated {
+  border-left-color: #2196f3;
+}
+
+.notification-timer.comment_added,
+.notification-timer.comment_deleted,
+.notification-timer.comment_updated {
+  color: #1f9aff;
+}
+
+.notification.comment_added .notification-icon {
+  color: #1f9aff;
+}
+
+.notification.comment_deleted .notification-icon {
+  color: #1f9aff;
+}
+
+.notification.comment_updated .notification-icon {
+  color: #1f9aff;
+}
+
 .notification-timer.article_created {
   color: #4caf50;
 }

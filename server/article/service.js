@@ -1,4 +1,4 @@
-const Article = require('../models/Article');
+const { Article, Comment } = require('../models/associations');
 
 async function ensureDataDirectory() {
   console.log('Using PostgreSQL database for article storage.');
@@ -6,7 +6,14 @@ async function ensureDataDirectory() {
 
 async function readArticleFile(id) {
   try {
-    const article = await Article.findByPk(id);
+    const article = await Article.findByPk(id, {
+      include: [{
+        model: Comment,
+        as: 'comments',
+        attributes: ['id', 'content', 'author', 'created_at', 'updated_at'],
+        order: [['created_at', 'DESC']]
+      }]
+    });
     if (!article) {
       return null;
     }
@@ -22,7 +29,8 @@ async function writeArticleFile(id, articleData) {
       id,
       title: articleData.title,
       content: articleData.content,
-      attachments: articleData.attachments || []
+      attachments: articleData.attachments || [],
+      workspace_id: articleData.workspace_id || null
     }, {
       returning: true
     });
@@ -43,9 +51,11 @@ async function deleteArticleFile(id) {
   }
 }
 
-async function getAllArticleIds() {
+async function getAllArticleIds(workspaceId = null) {
   try {
+    const where = workspaceId ? { workspace_id: workspaceId } : {};
     const articles = await Article.findAll({
+      where,
       attributes: ['id'],
       raw: true
     });

@@ -4,6 +4,7 @@ import ArticleList from './components/ArticleList/ArticleList';
 import ArticleView from './components/ArticleView/ArticleView';
 import ArticleCreate from './components/ArticleCreate/ArticleCreate';
 import ArticleEdit from './components/ArticleEdit/ArticleEdit';
+import WorkspaceManager from './components/WorkspaceManager/WorkspaceManager';
 import { WebSocketProvider } from './context/WebSocketContext';
 import NotificationDisplay from './components/ui/NotificationDisplay/NotificationDisplay';
 import './App.css';
@@ -24,6 +25,9 @@ function App() {
                 <Link to="/create" className="nav-link">
                   Create Article
                 </Link>
+                <Link to="/workspaces" className="nav-link">
+                  Workspaces
+                </Link>
               </nav>
             </header>
             <NotificationDisplay />
@@ -33,6 +37,7 @@ function App() {
                 <Route path="/article/:id" element={<ArticleView />} />
                 <Route path="/create" element={<ArticleCreate />} />
                 <Route path="/edit/:id" element={<ArticleEdit />} />
+                <Route path="/workspaces" element={<WorkspaceManager />} />
                 <Route path="*" element={<h2>404: Page Not Found</h2>} />
               </Routes>
             </div>
