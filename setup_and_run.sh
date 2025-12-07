@@ -33,7 +33,7 @@ else
 fi
 
 echo "Running database migrations..."
-npx sequelize-cli db:migrate
+npm run db:migrate
 
 echo "Seeding default workspaces..."
 psql -U "$DB_USER" -d "$DB_NAME" -c "INSERT INTO workspaces (id, name, description, created_at, updated_at) 

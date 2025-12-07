@@ -19,7 +19,7 @@ psql -U postgres -c "CREATE DATABASE article_app_dev;"
 ### 3. Run Database Migrations
 ```sh
 cd server
-npx sequelize-cli db:migrate
+npm run db:migrate
 ```
 
 ### 4. Install dependencies and run (with script)
@@ -64,8 +64,26 @@ npm run dev
   - `articles`: id (UUID), title, content, attachments (JSON), workspace_id, created_at, updated_at
   - `comments`: id (UUID), content, author, article_id (FK), created_at, updated_at
   - `workspaces`: id (UUID), name, description, created_at, updated_at
-- Run migrations: `npx sequelize-cli db:migrate`
-- Rollback migrations: `npx sequelize-cli db:migrate:undo`
+
+### Database Management Scripts
+Run from the `server/` directory:
+
+```sh
+# Run all pending migrations
+npm run db:migrate
+
+# Rollback last migration
+npm run db:migrate:undo
+
+# Check migration status
+npm run db:migrate:status
+
+# Reset database (undo all, migrate, seed)
+npm run db:reset
+
+# Generate new migration
+npm run migration:generate -- <migration-name>
+```
 
 ## Features
 - **CRUD Operations**: Create, Read, Update, Delete for articles, comments, and workspaces
