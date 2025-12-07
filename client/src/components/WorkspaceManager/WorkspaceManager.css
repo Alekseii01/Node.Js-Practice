@@ -80,6 +80,7 @@
 .form-group textarea {
   padding: 0.75rem 1rem;
   border: 1px solid #dee2e6;
+  color: var(--text-main);
   background: var(--bg-light);
   border-radius: 8px;
   font-size: 0.95rem;
