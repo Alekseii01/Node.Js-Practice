@@ -6,6 +6,8 @@ const {
   writeArticleFile,
   deleteArticleFile,
   getAllArticleIds,
+  getArticleVersions,
+  getArticleVersion
 } = require('./service');
 const { broadcastNotification } = require('../websocket/notificationService');
 
@@ -242,6 +244,42 @@ async function deleteAttachment(req, res) {
   }
 }
 
+async function getArticleVersionsHistory(req, res) {
+  const { id } = req.params;
+  
+  try {
+    const article = await readArticleFile(id);
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found.' });
+    }
+    
+    const versions = await getArticleVersions(id);
+    res.json(versions);
+  } catch (error) {
+    console.error(`Error fetching versions for article ${id}:`, error);
+    res.status(500).json({ message: 'Failed to retrieve article versions.' });
+  }
+}
+
+async function getArticleByVersion(req, res) {
+  const { id, versionNumber } = req.params;
+  
+  try {
+    const version = await getArticleVersion(id, parseInt(versionNumber));
+    if (version) {
+      res.json({
+        ...version,
+        isOldVersion: true
+      });
+    } else {
+      res.status(404).json({ message: 'Version not found.' });
+    }
+  } catch (error) {
+    console.error(`Error fetching version ${versionNumber} for article ${id}:`, error);
+    res.status(500).json({ message: 'Failed to retrieve article version.' });
+  }
+}
+
 module.exports = {
   getAllArticles,
   getArticleById,
@@ -250,4 +288,6 @@ module.exports = {
   deleteArticle,
   uploadAttachment,
   deleteAttachment,
+  getArticleVersionsHistory,
+  getArticleByVersion
 };

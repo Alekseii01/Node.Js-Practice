@@ -19,6 +19,7 @@ psql -U postgres -c "CREATE DATABASE article_app_dev;"
 ### 3. Run Database Migrations
 ```sh
 cd server
+npm install
 npm run db:migrate
 ```
 
@@ -64,6 +65,7 @@ npm run dev
   - `articles`: id (UUID), title, content, attachments (JSON), workspace_id, created_at, updated_at
   - `comments`: id (UUID), content, author, article_id (FK), created_at, updated_at
   - `workspaces`: id (UUID), name, description, created_at, updated_at
+  - `article_versions`: id (UUID), article_id (FK), version_number, title, content, attachments (JSONB), workspace_id (FK), created_at
 
 ### Database Management Scripts
 Run from the `server/` directory:
@@ -87,6 +89,7 @@ npm run migration:generate -- <migration-name>
 
 ## Features
 - **CRUD Operations**: Create, Read, Update, Delete for articles, comments, and workspaces
+- **Article Versioning**: Automatic version history on article updates, view and restore old versions
 - **Comments**: Add comments to articles with author names
 - **Workspaces**: Organize articles in workspaces, filter articles by workspace
 - **File Attachments**: Upload and manage files for articles (images, PDFs)
@@ -97,8 +100,10 @@ npm run migration:generate -- <migration-name>
 ### Articles
 - `GET /articles` - Get all articles (optional: `?workspace_id=<id>`)
 - `GET /articles/:id` - Get article by ID (includes comments)
+- `GET /articles/:id/versions` - Get article version history
+- `GET /articles/:id/versions/:versionNumber` - Get specific article version
 - `POST /articles` - Create article (body: `{title, content, workspace_id}`)
-- `PUT /articles/:id` - Update article (body: `{title, content, workspace_id}`)
+- `PUT /articles/:id` - Update article (body: `{title, content, workspace_id}`) - creates version automatically
 - `DELETE /articles/:id` - Delete article
 
 ### Comments

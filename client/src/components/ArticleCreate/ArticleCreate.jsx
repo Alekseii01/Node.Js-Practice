@@ -116,6 +116,7 @@ function ArticleCreate() {
             value={formData.title}
             onChange={(e) => handleChange('title')(e.target.value)}
             className={errors.title ? 'error' : ''}
+            placeholder="Enter article title"
           />
           {errors.title && <p className="field-error">Title is required.</p>}
         </div>
