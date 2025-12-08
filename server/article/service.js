@@ -1,7 +1,32 @@
-const { Article, Comment } = require('../models/associations');
+const { Article, Comment, ArticleVersion } = require('../models/associations');
 
 async function ensureDataDirectory() {
   console.log('Using PostgreSQL database for article storage.');
+}
+
+async function createArticleVersion(articleId, articleData) {
+  try {
+    // Get the current max version number for this article
+    const maxVersion = await ArticleVersion.max('version_number', {
+      where: { article_id: articleId }
+    });
+    
+    const versionNumber = (maxVersion || 0) + 1;
+    
+    // Create new version
+    const version = await ArticleVersion.create({
+      article_id: articleId,
+      version_number: versionNumber,
+      title: articleData.title,
+      content: articleData.content,
+      attachments: articleData.attachments || [],
+      workspace_id: articleData.workspace_id || null
+    });
+    
+    return version.toJSON();
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function readArticleFile(id) {
@@ -25,16 +50,38 @@ async function readArticleFile(id) {
 
 async function writeArticleFile(id, articleData) {
   try {
-    const [article, created] = await Article.upsert({
-      id,
-      title: articleData.title,
-      content: articleData.content,
-      attachments: articleData.attachments || [],
-      workspace_id: articleData.workspace_id || null
-    }, {
-      returning: true
-    });
-    return article;
+    const article = await Article.findByPk(id);
+    
+    if (article) {
+      // Article exists - create version before updating
+      await createArticleVersion(id, {
+        title: article.title,
+        content: article.content,
+        attachments: article.attachments,
+        workspace_id: article.workspace_id
+      });
+      
+      // Update the article
+      await article.update({
+        title: articleData.title,
+        content: articleData.content,
+        attachments: articleData.attachments || [],
+        workspace_id: articleData.workspace_id || null
+      });
+      
+      return article;
+    } else {
+      // New article - create it
+      const newArticle = await Article.create({
+        id,
+        title: articleData.title,
+        content: articleData.content,
+        attachments: articleData.attachments || [],
+        workspace_id: articleData.workspace_id || null
+      });
+      
+      return newArticle;
+    }
   } catch (error) {
     throw error;
   }
@@ -65,10 +112,40 @@ async function getAllArticleIds(workspaceId = null) {
   }
 }
 
+async function getArticleVersions(articleId) {
+  try {
+    const versions = await ArticleVersion.findAll({
+      where: { article_id: articleId },
+      order: [['version_number', 'DESC']],
+      attributes: ['id', 'version_number', 'title', 'created_at', 'updated_at']
+    });
+    return versions.map(v => v.toJSON());
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getArticleVersion(articleId, versionNumber) {
+  try {
+    const version = await ArticleVersion.findOne({
+      where: { 
+        article_id: articleId,
+        version_number: versionNumber
+      }
+    });
+    return version ? version.toJSON() : null;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   ensureDataDirectory,
   readArticleFile,
   writeArticleFile,
   deleteArticleFile,
   getAllArticleIds,
+  createArticleVersion,
+  getArticleVersions,
+  getArticleVersion
 };

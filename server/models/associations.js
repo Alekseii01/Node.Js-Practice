@@ -2,6 +2,7 @@ const sequelize = require('./index');
 const Article = require('./Article');
 const Comment = require('./Comment');
 const Workspace = require('./Workspace');
+const ArticleVersion = require('./ArticleVersion');
 
 Article.hasMany(Comment, {
   foreignKey: 'article_id',
@@ -25,9 +26,26 @@ Article.belongsTo(Workspace, {
   as: 'workspace'
 });
 
+Article.hasMany(ArticleVersion, {
+  foreignKey: 'article_id',
+  as: 'versions',
+  onDelete: 'CASCADE'
+});
+
+ArticleVersion.belongsTo(Article, {
+  foreignKey: 'article_id',
+  as: 'article'
+});
+
+ArticleVersion.belongsTo(Workspace, {
+  foreignKey: 'workspace_id',
+  as: 'workspace'
+});
+
 module.exports = {
   sequelize,
   Article,
   Comment,
-  Workspace
+  Workspace,
+  ArticleVersion
 };
