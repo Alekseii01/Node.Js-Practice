@@ -54,13 +54,11 @@ module.exports = {
       }
     });
 
-    // Add unique constraint on article_id + version_number
     await queryInterface.addIndex('article_versions', ['article_id', 'version_number'], {
       unique: true,
       name: 'article_versions_article_version_unique'
     });
 
-    // Add index for faster queries
     await queryInterface.addIndex('article_versions', ['article_id']);
   },
 

@@ -6,14 +6,12 @@ async function ensureDataDirectory() {
 
 async function createArticleVersion(articleId, articleData) {
   try {
-    // Get the current max version number for this article
     const maxVersion = await ArticleVersion.max('version_number', {
       where: { article_id: articleId }
     });
     
     const versionNumber = (maxVersion || 0) + 1;
     
-    // Create new version
     const version = await ArticleVersion.create({
       article_id: articleId,
       version_number: versionNumber,
@@ -53,7 +51,6 @@ async function writeArticleFile(id, articleData) {
     const article = await Article.findByPk(id);
     
     if (article) {
-      // Article exists - create version before updating
       await createArticleVersion(id, {
         title: article.title,
         content: article.content,
@@ -61,7 +58,6 @@ async function writeArticleFile(id, articleData) {
         workspace_id: article.workspace_id
       });
       
-      // Update the article
       await article.update({
         title: articleData.title,
         content: articleData.content,
@@ -71,7 +67,6 @@ async function writeArticleFile(id, articleData) {
       
       return article;
     } else {
-      // New article - create it
       const newArticle = await Article.create({
         id,
         title: articleData.title,
