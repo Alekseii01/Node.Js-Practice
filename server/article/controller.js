@@ -7,7 +7,8 @@ const {
   deleteArticleFile,
   getAllArticleIds,
   getArticleVersions,
-  getArticleVersion
+  getArticleVersion,
+  isAttachmentReferencedByVersions
 } = require('./service');
 const { broadcastNotification } = require('../websocket/notificationService');
 
@@ -224,10 +225,14 @@ async function deleteAttachment(req, res) {
     const deletedAttachment = article.attachments[attachmentIndex];
     article.attachments.splice(attachmentIndex, 1);
 
-    const filePath = path.join(__dirname, '..', 'uploads', filename);
-    await fs.unlink(filePath).catch(err => {
-      console.error('Error deleting file:', err);
-    });
+    const isFileStillReferenced = await isAttachmentReferencedByVersions(id, filename);
+
+    if (!isFileStillReferenced) {
+      const filePath = path.join(__dirname, '..', 'uploads', filename);
+      await fs.unlink(filePath).catch(err => {
+        console.error('Error deleting file:', err);
+      });
+    }
 
     await writeArticleFile(id, article);
 

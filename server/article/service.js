@@ -112,7 +112,7 @@ async function getArticleVersions(articleId) {
     const versions = await ArticleVersion.findAll({
       where: { article_id: articleId },
       order: [['version_number', 'DESC']],
-      attributes: ['id', 'version_number', 'title', 'created_at', 'updated_at']
+      attributes: ['id', 'version_number', 'title', 'attachments', 'created_at', 'updated_at']
     });
     return versions.map(v => v.toJSON());
   } catch (error) {
@@ -134,6 +134,23 @@ async function getArticleVersion(articleId, versionNumber) {
   }
 }
 
+async function isAttachmentReferencedByVersions(articleId, filename) {
+  try {
+    const versions = await ArticleVersion.findAll({
+      where: { article_id: articleId },
+      attributes: ['attachments']
+    });
+    
+    return versions.some(version => 
+      version.attachments && 
+      Array.isArray(version.attachments) &&
+      version.attachments.some(att => att.filename === filename)
+    );
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   ensureDataDirectory,
   readArticleFile,
@@ -142,5 +159,6 @@ module.exports = {
   getAllArticleIds,
   createArticleVersion,
   getArticleVersions,
-  getArticleVersion
+  getArticleVersion,
+  isAttachmentReferencedByVersions
 };
