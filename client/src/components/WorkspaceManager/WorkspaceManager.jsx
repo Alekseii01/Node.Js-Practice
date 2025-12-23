@@ -39,15 +39,20 @@ function WorkspaceManager() {
     }
 
     try {
+      const payload = {
+        name: formData.name.trim(),
+        description: formData.description.trim()
+      };
+
       if (editingId) {
         await axios.put(
           `${import.meta.env.VITE_API_URL}/workspaces/${editingId}`,
-          formData
+          payload
         );
       } else {
         await axios.post(
           `${import.meta.env.VITE_API_URL}/workspaces`,
-          formData
+          payload
         );
       }
       

@@ -18,8 +18,8 @@ if [ ! -d "uploads" ]; then
 fi
 
 echo "Checking database connection..."
-DB_NAME=$(grep DB_NAME .env.dev | cut -d '=' -f2)
-DB_USER=$(grep DB_USER .env.dev | cut -d '=' -f2)
+DB_NAME=$(grep DB_NAME ../.env | cut -d '=' -f2)
+DB_USER=$(grep DB_USER ../.env | cut -d '=' -f2)
 
 if command -v psql &> /dev/null; then
   if psql -U "$DB_USER" -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
