@@ -70,7 +70,7 @@ function UserManagement() {
         }
       }
       
-      setTimeout(() => setSuccess(''), 3000);
+      setTimeout(() => setSuccess(''), 1500);
     } catch (err) {
       console.error('Error updating user role:', err);
       setError(err.message || 'Failed to update user role');

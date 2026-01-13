@@ -3,10 +3,10 @@
   align-items: center;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
+  background: var(--main-color);
+  border-radius: var(--border-radius-main);
   margin-bottom: 2rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 .workspace-selector label {
@@ -14,37 +14,37 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-light);
   font-size: 1rem;
   white-space: nowrap;
 }
 
 .workspace-dropdown {
-  font-family: 'Poppins', sans-serif;
+  font-family: inherit;
   flex: 1;
   padding: 0.75rem 1rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  border-radius: var(--border-radius-card);
   font-size: 0.95rem;
   font-weight: 600;
-  background-color: white;
-  color: #495057;
+  background-color: var(--bg-white);
+  color: var(--text-main);
   cursor: pointer;
   min-width: 200px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-hover);
+  box-shadow: var(--shadow-card);
 }
 
 .workspace-dropdown:focus {
   outline: none;
-  border-color: white;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--text-light);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), var(--shadow-card-hover);
 }
 
 .workspace-dropdown:hover {
-  border-color: white;
+  border-color: var(--text-light);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .workspace-dropdown option {
