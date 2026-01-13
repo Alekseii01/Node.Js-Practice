@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs/promises');
+const { Article } = require('../models/associations');
 const {
   readArticleFile,
   writeArticleFile,
@@ -22,7 +23,8 @@ async function getAllArticles(req, res) {
         return { 
           id: article.id, 
           title: article.title,
-          workspace_id: article.workspace_id 
+          workspace_id: article.workspace_id,
+          created_by: article.created_by
         };
       }
       return null;
@@ -67,7 +69,8 @@ async function createArticle(req, res) {
     title: title.trim(), 
     content: content.trim(),
     attachments: [],
-    workspace_id: workspace_id || null
+    workspace_id: workspace_id || null,
+    created_by: req.user.id
   };
 
   try {
@@ -109,12 +112,22 @@ async function updateArticle(req, res) {
       return res.status(404).json({ message: 'Article not found.' });
     }
 
+    let articleOwner = existingArticle.created_by;
+    if (!existingArticle.created_by) {
+      articleOwner = req.user.id;
+    }
+
+    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
+      return res.status(403).json({ message: 'Access denied. You can only edit your own articles.' });
+    }
+
     const updatedArticle = {
       id,
       title: title.trim(),
       content: content.trim(),
       attachments: existingArticle.attachments || [],
-      workspace_id: workspace_id !== undefined ? workspace_id : existingArticle.workspace_id
+      workspace_id: workspace_id !== undefined ? workspace_id : existingArticle.workspace_id,
+      created_by: articleOwner
     };
 
     await writeArticleFile(id, updatedArticle);
@@ -139,6 +152,21 @@ async function deleteArticle(req, res) {
   const { id } = req.params;
 
   try {
+    const existingArticle = await readArticleFile(id);
+    if (!existingArticle) {
+      return res.status(404).json({ message: 'Article not found.' });
+    }
+
+    let articleOwner = existingArticle.created_by;
+    if (!existingArticle.created_by) {
+      articleOwner = req.user.id;
+      await Article.update({ created_by: articleOwner }, { where: { id } });
+    }
+
+    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
+      return res.status(403).json({ message: 'Access denied. You can only delete your own articles.' });
+    }
+
     const deleted = await deleteArticleFile(id);
     if (!deleted) {
       return res.status(404).json({ message: 'Article not found.' });
@@ -165,6 +193,17 @@ async function uploadAttachment(req, res) {
     if (!article) {
       await fs.unlink(req.file.path);
       return res.status(404).json({ message: 'Article not found.' });
+    }
+
+    let articleOwner = article.created_by;
+    if (!article.created_by) {
+      articleOwner = req.user.id;
+      await Article.update({ created_by: articleOwner }, { where: { id } });
+    }
+
+    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
+      await fs.unlink(req.file.path);
+      return res.status(403).json({ message: 'Access denied. You can only modify your own articles.' });
     }
 
     const attachment = {
@@ -208,6 +247,16 @@ async function deleteAttachment(req, res) {
     const article = await readArticleFile(id);
     if (!article) {
       return res.status(404).json({ message: 'Article not found.' });
+    }
+
+    let articleOwner = article.created_by;
+    if (!article.created_by) {
+      articleOwner = req.user.id;
+      await Article.update({ created_by: articleOwner }, { where: { id } });
+    }
+
+    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
+      return res.status(403).json({ message: 'Access denied. You can only modify your own articles.' });
     }
 
     if (!article.attachments || article.attachments.length === 0) {

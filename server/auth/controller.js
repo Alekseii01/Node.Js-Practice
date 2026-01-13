@@ -29,11 +29,15 @@ async function register(req, res) {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
+    const userCount = await User.count();
+    const isFirstUser = userCount === 0;
+
     const user = await User.create({
       email,
       password,
       firstName,
-      lastName
+      lastName,
+      role: isFirstUser ? 'admin' : 'user'
     });
 
     const token = generateToken(user.id);

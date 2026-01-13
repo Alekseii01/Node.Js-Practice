@@ -39,6 +39,38 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
+const requireAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+  
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+  
+  next();
+};
+
+const requireResourceAccess = (resourceUserIdField = 'created_by') => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+    
+    if (req.user.role === 'admin') {
+      return next();
+    }
+    
+    if (req.resource && req.resource[resourceUserIdField] === req.user.id) {
+      return next();
+    }
+    
+    return res.status(403).json({ message: 'Access denied. You can only edit your own resources.' });
+  };
+};
+
 module.exports = {
-  authenticateToken
+  authenticateToken,
+  requireAdmin,
+  requireResourceAccess
 };

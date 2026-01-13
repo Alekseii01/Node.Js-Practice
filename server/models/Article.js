@@ -43,6 +43,15 @@ const Article = sequelize.define('Article', {
       key: 'id'
     },
     onDelete: 'SET NULL'
+  },
+  created_by: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'users',
+      key: 'id'
+    },
+    onDelete: 'SET NULL'
   }
 }, {
   tableName: 'articles',

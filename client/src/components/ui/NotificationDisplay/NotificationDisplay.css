@@ -46,6 +46,19 @@
   border-left-color: #2196f3;
 }
 
+.notification.user_role_updated {
+  border-left-color: #673ab7;
+  background: linear-gradient(135deg, #ffffff 0%, #f3e5f5 100%);
+}
+
+.notification.user_role_updated .notification-icon {
+  color: #673ab7;
+}
+
+.notification-timer.user_role_updated {
+  color: #673ab7;
+}
+
 .notification-timer.comment_added,
 .notification-timer.comment_deleted,
 .notification-timer.comment_updated {

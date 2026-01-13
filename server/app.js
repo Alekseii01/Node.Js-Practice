@@ -6,6 +6,7 @@ const commentsRouter = require('./comment/index');
 const directCommentsRouter = require('./comment/directRouter');
 const workspacesRouter = require('./workspace/index');
 const authRouter = require('./auth/index');
+const usersRouter = require('./users/index');
 const { authenticateToken } = require('./middleware/auth');
 const { sequelize } = require('./models/associations');
 
@@ -23,7 +24,8 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/auth', authRouter);
-app.use('/articles', authenticateToken, articlesRouter);
+app.use('/users', usersRouter);
+app.use('/articles', articlesRouter);
 app.use('/articles', authenticateToken, commentsRouter);
 app.use('/comments', authenticateToken, directCommentsRouter);
 app.use('/workspaces', authenticateToken, workspacesRouter);
