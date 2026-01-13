@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../ui/Button/Button';
-import axios from 'axios';
+import ApiService from '../../utils/apiService';
 import { Link } from 'react-router-dom';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog';
@@ -16,11 +16,11 @@ function ArticleList() {
 
   const fetchArticles = async () => {
     try {
-      const url = selectedWorkspace
-        ? `${import.meta.env.VITE_API_URL}/articles?workspace_id=${selectedWorkspace}`
-        : `${import.meta.env.VITE_API_URL}/articles`;
-      const response = await axios.get(url);
-      setArticles(response.data);
+      const endpoint = selectedWorkspace
+        ? `/articles?workspace_id=${selectedWorkspace}`
+        : '/articles';
+      const response = await ApiService.get(endpoint);
+      setArticles(response);
     } catch (err) {
       console.error('Error fetching articles:', err);
       setError('Failed to fetch articles. Please try again later.');
@@ -38,7 +38,7 @@ function ArticleList() {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/articles/${deleteId}`);
+      await ApiService.delete(`/articles/${deleteId}`);
       fetchArticles();
       setShowDialog(false);
       setDeleteId(null);

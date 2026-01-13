@@ -3,6 +3,7 @@ const Article = require('./Article');
 const Comment = require('./Comment');
 const Workspace = require('./Workspace');
 const ArticleVersion = require('./ArticleVersion');
+const User = require('./User');
 
 Article.hasMany(Comment, {
   foreignKey: 'article_id',
@@ -47,5 +48,6 @@ module.exports = {
   Article,
   Comment,
   Workspace,
-  ArticleVersion
+  ArticleVersion,
+  User
 };

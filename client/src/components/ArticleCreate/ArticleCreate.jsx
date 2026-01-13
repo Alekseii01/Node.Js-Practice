@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../ui/Button/Button.jsx';
 import { FaCheckCircle } from 'react-icons/fa';
-import axios from 'axios';
+import ApiService from '../../utils/apiService.js';
 import { useNavigate } from 'react-router-dom';
 import TipTapEditor from '../ui/TipTapEditor/TipTapEditor.jsx';
 import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
@@ -25,8 +25,8 @@ function ArticleCreate() {
 
   const fetchWorkspaces = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/workspaces`);
-      setWorkspaces(response.data);
+      const response = await ApiService.get('/workspaces');
+      setWorkspaces(response);
     } catch (err) {
       console.error('Error fetching workspaces:', err);
     }
@@ -61,9 +61,9 @@ function ArticleCreate() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/articles`, formData);
-      console.log('Article created:', response.data);
-      const articleId = response.data.id;
+      const response = await ApiService.post('/articles', formData);
+      console.log('Article created:', response);
+      const articleId = response.id;
       setSuccess(true);
       setErrors({});
 
@@ -72,15 +72,7 @@ function ArticleCreate() {
           for (const file of attachments) {
             const formData = new FormData();
             formData.append('file', file);
-            await axios.post(
-              `${import.meta.env.VITE_API_URL}/articles/${articleId}/attachments`,
-              formData,
-              {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-              }
-            );
+            await ApiService.uploadFile(`/articles/${articleId}/attachments`, formData);
           }
         } catch (uploadErr) {
           console.error('Error uploading attachments:', uploadErr);
@@ -92,11 +84,7 @@ function ArticleCreate() {
       }, 1200);
     } catch (err) {
       console.error('Error creating article:', err);
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Failed to create article. Please try again.');
-      }
+      setError(err.message || 'Failed to create article. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -156,9 +144,9 @@ function ArticleCreate() {
           hideUploadButton={true}
         />
 
-        {error && <StatusMessage status="error" message={error} />}
+        {error && <StatusMessage status="error" message={error} onClose={() => setError(null)} />}
         {loading && <StatusMessage status="loading" message="Creating article..." />}
-        {success && <StatusMessage status="success" message="Article created successfully!" />}
+        {success && <StatusMessage status="success" message="Article created successfully!" onClose={() => setSuccess(false)} />}
         <div className="btn-container">
           <Button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>
             Back to Articles

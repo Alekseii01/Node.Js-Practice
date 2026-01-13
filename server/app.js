@@ -5,6 +5,8 @@ const articlesRouter = require('./article/index');
 const commentsRouter = require('./comment/index');
 const directCommentsRouter = require('./comment/directRouter');
 const workspacesRouter = require('./workspace/index');
+const authRouter = require('./auth/index');
+const { authenticateToken } = require('./middleware/auth');
 const { sequelize } = require('./models/associations');
 
 const app = express();
@@ -13,18 +15,18 @@ app.use(
   cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 app.use(express.json());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/articles', articlesRouter);
-app.use('/articles', commentsRouter);
-app.use('/comments', directCommentsRouter);
-app.use('/workspaces', workspacesRouter);
-app.use('/workspaces', workspacesRouter);
+app.use('/auth', authRouter);
+app.use('/articles', authenticateToken, articlesRouter);
+app.use('/articles', authenticateToken, commentsRouter);
+app.use('/comments', authenticateToken, directCommentsRouter);
+app.use('/workspaces', authenticateToken, workspacesRouter);
 
 sequelize.authenticate()
   .then(() => {
