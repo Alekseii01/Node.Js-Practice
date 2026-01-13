@@ -1,8 +1,12 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/associations');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key';
+const { MIN_PASSWORD_LENGTH } = require('../constants');
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -16,8 +20,8 @@ async function register(req, res) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long` });
     }
 
     const existingUser = await User.findOne({ where: { email } });
@@ -41,6 +45,22 @@ async function register(req, res) {
     });
   } catch (error) {
     console.error('Registration error:', error);
+
+    if (error.name === 'SequelizeValidationError') {
+      const validationErrors = error.errors.map(err => err.message);
+      return res.status(400).json({ 
+        message: 'Validation error',
+        errors: validationErrors 
+      });
+    }
+
+    if (error.name === 'SequelizeValidationError' || 
+        (error.errors && error.errors.some(e => e.validatorKey === 'isEmail'))) {
+      return res.status(400).json({ 
+        message: 'Please provide a valid email address' 
+      });
+    }
+
     res.status(500).json({ message: 'Internal server error' });
   }
 }

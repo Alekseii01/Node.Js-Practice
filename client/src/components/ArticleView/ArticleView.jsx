@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../ui/Button/Button.jsx';
-import axios from 'axios';
+import ApiService from '../../utils/apiService.js';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { FaEdit, FaTrash, FaHistory } from 'react-icons/fa';
 import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog.jsx';
@@ -27,18 +27,18 @@ function ArticleView() {
       try {
         let response;
         if (versionParam) {
-          response = await axios.get(`${import.meta.env.VITE_API_URL}/articles/${id}/versions/${versionParam}`);
-          setIsOldVersion(response.data.isOldVersion || false);
+          response = await ApiService.get(`/articles/${id}/versions/${versionParam}`);
+          setIsOldVersion(response.isOldVersion || false);
           setCurrentVersion(parseInt(versionParam));
         } else {
-          response = await axios.get(`${import.meta.env.VITE_API_URL}/articles/${id}`);
+          response = await ApiService.get(`/articles/${id}`);
           setIsOldVersion(false);
           setCurrentVersion(null);
         }
-        setArticle(response.data);
+        setArticle(response);
       } catch (err) {
         console.error(`Error fetching article ${id}:`, err);
-        if (err.response && err.response.status === 404) {
+        if (err.message && err.message.includes('not found')) {
           setError('Article not found.');
         } else {
           setError('Failed to retrieve article. Please try again later.');
@@ -54,13 +54,13 @@ function ArticleView() {
 
   const handleAddComment = async (commentData) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/articles/${id}/comments`,
+      const response = await ApiService.post(
+        `/articles/${id}/comments`,
         commentData
       );
       setArticle(prev => ({
         ...prev,
-        comments: [response.data.comment, ...(prev.comments || [])]
+        comments: [response.comment, ...(prev.comments || [])]
       }));
     } catch (err) {
       console.error('Error adding comment:', err);
@@ -70,7 +70,7 @@ function ArticleView() {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/comments/${commentId}`);
+      await ApiService.delete(`/comments/${commentId}`);
       setArticle(prev => ({
         ...prev,
         comments: prev.comments.filter(c => c.id !== commentId)
@@ -82,14 +82,14 @@ function ArticleView() {
 
   const handleEditComment = async (commentId, commentData) => {
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/comments/${commentId}`,
+      const response = await ApiService.put(
+        `/comments/${commentId}`,
         commentData
       );
       setArticle(prev => ({
         ...prev,
         comments: prev.comments.map(c => 
-          c.id === commentId ? response.data.comment : c
+          c.id === commentId ? response.comment : c
         )
       }));
     } catch (err) {
@@ -104,7 +104,7 @@ function ArticleView() {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/articles/${id}`);
+      await ApiService.delete(`/articles/${id}`);
       navigate('/');
     } catch (err) {
       console.error('Error deleting article:', err);

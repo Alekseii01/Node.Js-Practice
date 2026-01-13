@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { MIN_PASSWORD_LENGTH } from '../../utils/constants.js';
 import './Login.css';
 
 const Login = () => {
@@ -24,8 +25,8 @@ const Login = () => {
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long`);
       setLoading(false);
       return;
     }

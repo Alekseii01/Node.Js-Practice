@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import ApiService from '../../utils/apiService.js';
 import Button from '../../components/ui/Button/Button.jsx';
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage.jsx';
 import TipTapEditor from '../ui/TipTapEditor/TipTapEditor.jsx';
@@ -26,11 +26,11 @@ function ArticleEdit() {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/articles/${id}`);
-        const data = { title: response.data.title || '', content: response.data.content || '' };
+        const response = await ApiService.get(`/articles/${id}`);
+        const data = { title: response.title || '', content: response.content || '' };
         setFormData(data);
         setOriginalData(data);
-        setAttachments(response.data.attachments || []);
+        setAttachments(response.attachments || []);
       } catch (err) {
         console.error(`Error fetching article ${id}:`, err);
         setError('Failed to load article for editing.');
@@ -84,15 +84,15 @@ function ArticleEdit() {
     }
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/articles/${id}`, formData);
-      console.log('Article updated:', response.data);
+      const response = await ApiService.put(`/articles/${id}`, formData);
+      console.log('Article updated:', response);
       setSuccess(true);
       setErrors({});
       setOriginalData(formData);
       setTimeout(() => navigate(`/article/${id}`), 900);
     } catch (err) {
       console.error('Error updating article:', err);
-      setError(err.response?.data?.message || 'Failed to update article. Please try again.');
+      setError(err.message || 'Failed to update article. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -154,9 +154,9 @@ function ArticleEdit() {
           readOnly={false}
         />
 
-        {error && <StatusMessage status="error" message={error} />}
+        {error && <StatusMessage status="error" message={error} onClose={() => setError(null)} />}
         {loading && <StatusMessage status="loading" message="Updating article..." />}
-        {success && <StatusMessage status="success" message="Article updated successfully!" />}
+        {success && <StatusMessage status="success" message="Article updated successfully!" onClose={() => setSuccess(false)} />}
 
         <div className="btn-container">
           <Button type="Button" className="btn btn-secondary" onClick={() => navigate(`/article/${id}`)}>

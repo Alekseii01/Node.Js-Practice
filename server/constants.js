@@ -1,0 +1,7 @@
+const MIN_PASSWORD_LENGTH = 6;
+const MAX_PASSWORD_LENGTH = 24;
+
+module.exports = {
+  MIN_PASSWORD_LENGTH,
+  MAX_PASSWORD_LENGTH
+};

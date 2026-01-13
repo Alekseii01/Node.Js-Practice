@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import ApiService from '../../utils/apiService.js';
 import './VersionHistory.css';
 
 const formatDate = (dateString) => {
@@ -23,8 +23,8 @@ function VersionHistory({ articleId, currentVersion, onSelectVersion, onClose })
     const fetchVersions = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/articles/${articleId}/versions`);
-        setVersions(response.data);
+        const response = await ApiService.get(`/articles/${articleId}/versions`);
+        setVersions(response);
         setError(null);
       } catch (err) {
         console.error('Error fetching version history:', err);

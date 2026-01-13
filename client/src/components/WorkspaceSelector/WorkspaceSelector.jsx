@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import ApiService from '../../utils/apiService.js';
 import { useWebSocket } from '../../context/WebSocketContext';
 import './WorkspaceSelector.css';
 
@@ -23,8 +23,8 @@ function WorkspaceSelector({ selectedWorkspace, onWorkspaceChange }) {
 
   const fetchWorkspaces = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/workspaces`);
-      setWorkspaces(response.data);
+      const response = await ApiService.get('/workspaces');
+      setWorkspaces(response);
     } catch (error) {
       console.error('Error fetching workspaces:', error);
     } finally {

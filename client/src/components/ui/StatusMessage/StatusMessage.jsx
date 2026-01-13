@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaSpinner, FaTimes } from 'react-icons/fa';
 import './StatusMessage.css';
 
-function StatusMessage({ status, message }) {
+function StatusMessage({ status, message, onClose }) {
   const getIcon = () => {
     switch (status) {
       case 'loading':
@@ -20,6 +20,15 @@ function StatusMessage({ status, message }) {
     <div className={`status-message ${status}`}>
       <div className="status-modal">
         <div className="status-content">
+          {onClose && (
+            <button
+              className="status-close-btn"
+              onClick={onClose}
+              aria-label="Close message"
+            >
+              <FaTimes />
+            </button>
+          )}
           {getIcon()}
           <p className="message-text">{message}</p>
         </div>

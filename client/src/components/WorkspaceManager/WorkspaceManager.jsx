@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import ApiService from '../../utils/apiService.js';
 import './WorkspaceManager.css';
 
 function WorkspaceManager() {
@@ -19,8 +19,8 @@ function WorkspaceManager() {
 
   const fetchWorkspaces = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/workspaces`);
-      setWorkspaces(response.data);
+      const response = await ApiService.get('/workspaces');
+      setWorkspaces(response);
     } catch (error) {
       console.error('Error fetching workspaces:', error);
       setError('Failed to load workspaces');
@@ -45,13 +45,13 @@ function WorkspaceManager() {
       };
 
       if (editingId) {
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/workspaces/${editingId}`,
+        await ApiService.put(
+          `/workspaces/${editingId}`,
           payload
         );
       } else {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/workspaces`,
+        await ApiService.post(
+          '/workspaces',
           payload
         );
       }
@@ -79,7 +79,7 @@ function WorkspaceManager() {
     }
 
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/workspaces/${id}`);
+      await ApiService.delete(`/workspaces/${id}`);
       await fetchWorkspaces();
     } catch (error) {
       console.error('Error deleting workspace:', error);

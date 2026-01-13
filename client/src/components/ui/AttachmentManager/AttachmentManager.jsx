@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import ApiService from '../../../utils/apiService.js';
 import { FaPaperclip, FaFilePdf, FaFileImage, FaTrash } from 'react-icons/fa';
 import Button from '../Button/Button';
 import './AttachmentManager.css';
@@ -58,16 +58,11 @@ function AttachmentManager({ articleId, attachments = [], onAttachmentsChange, r
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/articles/${articleId}/attachments`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
+        const response = await ApiService.uploadFile(
+          `/articles/${articleId}/attachments`,
+          formData
         );
-        uploadedAttachments.push(response.data.attachment);
+        uploadedAttachments.push(response.attachment);
       }
 
       setSelectedFiles([]);
@@ -103,8 +98,8 @@ function AttachmentManager({ articleId, attachments = [], onAttachmentsChange, r
     }
 
     try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/articles/${articleId}/attachments/${filename}`
+      await ApiService.delete(
+        `/articles/${articleId}/attachments/${filename}`
       );
 
       if (onAttachmentsChange) {
@@ -112,7 +107,7 @@ function AttachmentManager({ articleId, attachments = [], onAttachmentsChange, r
       }
     } catch (err) {
       console.error('Error deleting attachment:', err);
-      setError(err.response?.data?.message || 'Failed to delete attachment. Please try again.');
+      setError(err.message || 'Failed to delete attachment. Please try again.');
     }
   };
 

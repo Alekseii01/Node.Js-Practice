@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+import { API_BASE_URL } from './constants.js';
+
+const API_BASE_URL_FINAL = API_BASE_URL;
 
 class ApiService {
   static getToken() {
@@ -6,7 +8,7 @@ class ApiService {
   }
 
   static async request(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
+    const url = `${API_BASE_URL_FINAL}${endpoint}`;
     const token = this.getToken();
 
     const defaultHeaders = {
@@ -71,7 +73,7 @@ class ApiService {
   }
 
   static async uploadFile(endpoint, formData) {
-    const url = `${API_BASE_URL}${endpoint}`;
+    const url = `${API_BASE_URL_FINAL}${endpoint}`;
     const token = this.getToken();
 
     const headers = {};

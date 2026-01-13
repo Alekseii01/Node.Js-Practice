@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const sequelize = require('./index');
+const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = require('../constants');
 
 const User = sequelize.define('User', {
   id: {
@@ -20,7 +21,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [6, 100]
+      len: [MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH]
     }
   },
   firstName: {
