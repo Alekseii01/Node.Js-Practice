@@ -22,7 +22,8 @@ async function getAllArticles(req, res) {
         return { 
           id: article.id, 
           title: article.title,
-          workspace_id: article.workspace_id 
+          workspace_id: article.workspace_id,
+          created_by: article.created_by
         };
       }
       return null;
@@ -67,7 +68,8 @@ async function createArticle(req, res) {
     title: title.trim(), 
     content: content.trim(),
     attachments: [],
-    workspace_id: workspace_id || null
+    workspace_id: workspace_id || null,
+    created_by: req.user.id
   };
 
   try {
@@ -104,17 +106,15 @@ async function updateArticle(req, res) {
   }
 
   try {
-    const existingArticle = await readArticleFile(id);
-    if (!existingArticle) {
-      return res.status(404).json({ message: 'Article not found.' });
-    }
+    const existingArticle = req.resource;
 
     const updatedArticle = {
       id,
       title: title.trim(),
       content: content.trim(),
       attachments: existingArticle.attachments || [],
-      workspace_id: workspace_id !== undefined ? workspace_id : existingArticle.workspace_id
+      workspace_id: workspace_id !== undefined ? workspace_id : existingArticle.workspace_id,
+      created_by: existingArticle.created_by || req.user.id
     };
 
     await writeArticleFile(id, updatedArticle);
@@ -139,6 +139,7 @@ async function deleteArticle(req, res) {
   const { id } = req.params;
 
   try {
+    // Article is already loaded and authorization checked by middleware
     const deleted = await deleteArticleFile(id);
     if (!deleted) {
       return res.status(404).json({ message: 'Article not found.' });
@@ -161,11 +162,7 @@ async function uploadAttachment(req, res) {
   }
 
   try {
-    const article = await readArticleFile(id);
-    if (!article) {
-      await fs.unlink(req.file.path);
-      return res.status(404).json({ message: 'Article not found.' });
-    }
+    const article = req.resource;
 
     const attachment = {
       filename: req.file.filename,
@@ -205,10 +202,7 @@ async function deleteAttachment(req, res) {
   const { id, filename } = req.params;
 
   try {
-    const article = await readArticleFile(id);
-    if (!article) {
-      return res.status(404).json({ message: 'Article not found.' });
-    }
+    const article = req.resource;
 
     if (!article.attachments || article.attachments.length === 0) {
       return res.status(404).json({ message: 'No attachments found.' });

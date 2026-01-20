@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/associations');
+const { USER_ROLES } = require('../constants');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -23,6 +24,13 @@ const authenticateToken = async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid token' });
     }
 
+    if (decoded.role !== user.role) {
+      return res.status(401).json({ 
+        message: 'Token role mismatch. Please log in again.',
+        code: 'ROLE_MISMATCH'
+      });
+    }
+
     req.userId = user.id;
     req.user = user;
     next();
@@ -39,6 +47,41 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
+const requireAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+  
+  if (req.user.role !== USER_ROLES.ADMIN) {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+  
+  next();
+};
+
+const requireResourceAccess = (resourceUserIdField = 'created_by') => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+    
+    if (req.user.role === USER_ROLES.ADMIN) {
+      return next();
+    }
+    
+    if (req.resource) {
+      const resourceUserId = req.resource[resourceUserIdField];
+      if (!resourceUserId || parseInt(resourceUserId) === parseInt(req.user.id)) {
+        return next();
+      }
+    }
+    
+    return res.status(403).json({ message: 'Access denied. You can only edit your own resources.' });
+  };
+};
+
 module.exports = {
-  authenticateToken
+  authenticateToken,
+  requireAdmin,
+  requireResourceAccess
 };

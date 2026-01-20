@@ -5,6 +5,7 @@ import ArticleView from './components/ArticleView/ArticleView';
 import ArticleCreate from './components/ArticleCreate/ArticleCreate';
 import ArticleEdit from './components/ArticleEdit/ArticleEdit';
 import WorkspaceManager from './components/WorkspaceManager/WorkspaceManager';
+import UserManagement from './components/UserManagement/UserManagement';
 import Header from './components/Header/Header';
 import Navigation from './components/Navigation/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -15,11 +16,11 @@ import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="app">
-          <ProtectedRoute>
-            <WebSocketProvider>
+    <WebSocketProvider>
+      <AuthProvider>
+        <Router>
+          <div className="app">
+            <ProtectedRoute>
               <Header />
               <Navigation />
               <div className="container">
@@ -31,15 +32,16 @@ function App() {
                     <Route path="/create" element={<ArticleCreate />} />
                     <Route path="/edit/:id" element={<ArticleEdit />} />
                     <Route path="/workspaces" element={<WorkspaceManager />} />
+                    <Route path="/users" element={<UserManagement />} />
                     <Route path="*" element={<h2>404: Page Not Found</h2>} />
                   </Routes>
                 </div>
               </div>
-            </WebSocketProvider>
-          </ProtectedRoute>
-        </div>
-      </Router>
-    </AuthProvider>
+            </ProtectedRoute>
+          </div>
+        </Router>
+      </AuthProvider>
+    </WebSocketProvider>
   );
 }
 

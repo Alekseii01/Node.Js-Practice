@@ -6,11 +6,13 @@ import StatusMessage from '../../components/ui/StatusMessage/StatusMessage.jsx';
 import TipTapEditor from '../ui/TipTapEditor/TipTapEditor.jsx';
 import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
 import { validateTitle, validateContent } from '../../utils/validation.js';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './ArticleEdit.css';
 
 function ArticleEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { canEditResource, user } = useAuth();
 
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [originalData, setOriginalData] = useState({ title: '', content: '' });
@@ -20,6 +22,7 @@ function ArticleEdit() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [loadingArticle, setLoadingArticle] = useState(true);
+  const [articleData, setArticleData] = useState(null);
 
   const validators = { title: validateTitle, content: validateContent };
 
@@ -31,6 +34,7 @@ function ArticleEdit() {
         setFormData(data);
         setOriginalData(data);
         setAttachments(response.attachments || []);
+        setArticleData(response);
       } catch (err) {
         console.error(`Error fetching article ${id}:`, err);
         setError('Failed to load article for editing.');
@@ -112,6 +116,18 @@ function ArticleEdit() {
         <h2 className="error-message">Error</h2>
         <p className="error-message">{error}</p>
         <Button onClick={() => navigate('/')}>Back to Articles</Button>
+      </div>
+    );
+  }
+
+  if (articleData && !canEditResource(articleData.created_by)) {
+    return (
+      <div className="container">
+        <h2>Access Denied</h2>
+        <p>You don't have permission to edit this article. Only the article creator or administrators can edit articles.</p>
+        <div className="btn-container">
+          <Button onClick={() => navigate(`/article/${id}`)}>Back to Article</Button>
+        </div>
       </div>
     );
   }

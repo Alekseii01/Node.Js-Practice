@@ -62,7 +62,8 @@ async function writeArticleFile(id, articleData) {
         title: articleData.title,
         content: articleData.content,
         attachments: articleData.attachments || [],
-        workspace_id: articleData.workspace_id || null
+        workspace_id: articleData.workspace_id || null,
+        created_by: articleData.created_by || article.created_by
       });
       
       return article;
@@ -72,7 +73,8 @@ async function writeArticleFile(id, articleData) {
         title: articleData.title,
         content: articleData.content,
         attachments: articleData.attachments || [],
-        workspace_id: articleData.workspace_id || null
+        workspace_id: articleData.workspace_id || null,
+        created_by: articleData.created_by || null
       });
       
       return newArticle;

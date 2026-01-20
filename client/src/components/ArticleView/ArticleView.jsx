@@ -7,6 +7,7 @@ import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog.jsx'
 import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
 import CommentList from '../CommentList/CommentList.jsx';
 import VersionHistory from '../VersionHistory/VersionHistory.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './ArticleView.css';
 
 function ArticleView() {
@@ -14,6 +15,7 @@ function ArticleView() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const versionParam = searchParams.get('version');
+  const { canEditResource, user } = useAuth();
   
   const [article, setArticle] = useState(null);
   const [error, setError] = useState(null);
@@ -108,7 +110,11 @@ function ArticleView() {
       navigate('/');
     } catch (err) {
       console.error('Error deleting article:', err);
-      setError('Failed to delete article. Please try again.');
+      if (err.message.includes('Access denied')) {
+        setError('Access denied. You can only delete your own articles.');
+      } else {
+        setError('Failed to delete article. Please try again.');
+      }
     }
     setShowDialog(false);
   };
@@ -163,7 +169,7 @@ function ArticleView() {
       <div className="article-header">
         <h2>{article.title}</h2>
         <div className="article-actions">
-          {!isOldVersion && (
+          {!isOldVersion && (article.created_by ? canEditResource(article.created_by) : user?.role === 'admin') && (
             <>
               <Link to={`/edit/${id}`} className="icon-link">
                 <FaEdit className="icon edit-icon" />

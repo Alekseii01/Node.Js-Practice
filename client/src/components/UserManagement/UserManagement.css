@@ -1,0 +1,223 @@
+.user-management {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-management__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: var(--border-width) solid var(--border-main);
+}
+
+.user-management__title {
+  font-size: 1.5rem;
+  color: var(--text-main);
+  margin: 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-management__title svg {
+  color: var(--main-color);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-white);
+  border: var(--border-width) solid var(--border-main);
+  border-radius: var(--border-radius-card);
+  overflow: hidden;
+}
+
+.users-table th,
+.users-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: var(--border-width) solid var(--border-light);
+}
+
+.users-table th {
+  background: var(--bg-grey);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: var(--border-width) solid var(--border-main);
+}
+
+.users-table td {
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.users-table tr:hover {
+  background: var(--bg-light);
+}
+
+.users-table tr:last-child td {
+  border-bottom: none;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--main-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.user-details {
+  min-width: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.user-email {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--border-radius-small);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-badge--admin {
+  background: var(--main-color);
+  color: var(--text-light);
+}
+
+.role-badge--user {
+  background: var(--bg-grey);
+  color: var(--text-secondary);
+}
+
+.role-select {
+  padding: 8px 12px;
+  border: var(--border-width) solid var(--border-main);
+  border-radius: var(--border-radius-small);
+  background: var(--bg-white);
+  font-size: 0.9rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: border-color var(--transition-hover);
+  min-width: 100px;
+}
+
+.role-select:hover {
+  border-color: var(--main-color-light);
+}
+
+.role-select:focus {
+  outline: none;
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 3px var(--main-color-light);
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.text-muted {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  background: var(--bg-white);
+  border: var(--border-width) solid var(--border-main);
+  border-radius: var(--border-radius-card);
+}
+
+.access-denied {
+  text-align: center;
+  padding: 48px;
+  background: var(--bg-white);
+  border: var(--border-width) solid var(--border-main);
+  border-radius: var(--border-radius-card);
+}
+
+.access-denied__icon {
+  font-size: 3rem;
+  color: var(--danger);
+  margin-bottom: 16px;
+}
+
+.access-denied__title {
+  font-size: 1.25rem;
+  margin: 0 0 8px 0;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.access-denied__message {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .users-table {
+    font-size: 0.85rem;
+  }
+  
+  .users-table th,
+  .users-table td {
+    padding: 12px;
+  }
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+}

@@ -10,75 +10,88 @@
 }
 
 .notification {
-  background-color: white;
-  border-radius: 8px;
+  background-color: var(--bg-white);
+  border-radius: var(--border-radius-card);
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-card-hover);
   display: flex;
   align-items: flex-start;
   gap: 12px;
   animation: slideIn 0.3s ease-out;
-  border-left: 4px solid #2196f3;
+  border-left: 4px solid var(--main-color);
   position: relative;
   overflow: hidden;
 }
 
 .notification.article_created {
-  border-left-color: #4caf50;
+  border-left-color: var(--success);
 }
 
 .notification.article_updated {
-  border-left-color: #ff9800;
+  border-left-color: var(--warning);
 }
 
 .notification.article_deleted {
-  border-left-color: #f44336;
+  border-left-color: var(--danger);
 }
 
 .notification.attachment_added,
 .notification.attachment_removed {
-  border-left-color: #9c27b0;
+  border-left-color: var(--main-color-dark);
 }
 
 .notification.comment_added,
 .notification.comment_deleted,
 .notification.comment_updated {
-  border-left-color: #2196f3;
+  border-left-color: var(--main-color);
+}
+
+.notification.user_role_updated {
+  border-left-color: var(--main-color-dark);
+  background: var(--main-color-light);
+}
+
+.notification.user_role_updated .notification-icon {
+  color: var(--main-color-dark);
+}
+
+.notification-timer.user_role_updated {
+  color: var(--main-color-dark);
 }
 
 .notification-timer.comment_added,
 .notification-timer.comment_deleted,
 .notification-timer.comment_updated {
-  color: #1f9aff;
+  color: var(--main-color);
 }
 
 .notification.comment_added .notification-icon {
-  color: #1f9aff;
+  color: var(--main-color);
 }
 
 .notification.comment_deleted .notification-icon {
-  color: #1f9aff;
+  color: var(--main-color);
 }
 
 .notification.comment_updated .notification-icon {
-  color: #1f9aff;
+  color: var(--main-color);
 }
 
 .notification-timer.article_created {
-  color: #4caf50;
+  color: var(--success);
 }
 
 .notification-timer.article_updated {
-  color: #ff9800;
+  color: var(--warning);
 }
 
 .notification-timer.article_deleted {
-  color: #f44336;
+  color: var(--danger);
 }
 
 .notification-timer.attachment_added,
 .notification-timer.attachment_removed {
-  color: #9c27b0;
+  color: var(--main-color-dark);
 }
 
 .notification-icon {
@@ -87,20 +100,20 @@
 }
 
 .notification.article_created .notification-icon {
-  color: #4caf50;
+  color: var(--success);
 }
 
 .notification.article_updated .notification-icon {
-  color: #ff9800;
+  color: var(--warning);
 }
 
 .notification.article_deleted .notification-icon {
-  color: #f44336;
+  color: var(--danger);
 }
 
 .notification.attachment_added .notification-icon,
 .notification.attachment_removed .notification-icon {
-  color: #9c27b0;
+  color: var(--main-color-dark);
 }
 
 .notification-content {
@@ -110,13 +123,13 @@
 .notification-title {
   font-weight: 600;
   margin: 0 0 4px 0;
-  color: #333;
+  color: var(--text-main);
   font-size: 0.95rem;
 }
 
 .notification-message {
   margin: 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.4;
 }
@@ -124,17 +137,17 @@
 .notification-close {
   background: none;
   border: none;
-  color: #999;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0;
   font-size: 1.2rem;
   line-height: 1;
   flex-shrink: 0;
-  transition: color 0.2s;
+  transition: color var(--transition-hover);
 }
 
 .notification-close:hover {
-  color: #333;
+  color: var(--text-main);
 }
 
 .notification-timer {

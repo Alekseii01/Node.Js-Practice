@@ -14,7 +14,7 @@ const Header = () => {
       <div className="header-content">
         <h1>Article App</h1>
         <div className="user-info">
-          <span>Welcome, {user?.firstName || user?.email}!</span>
+          <span>Welcome, {user?.firstName || user?.email}! ({user?.role})</span>
           <button onClick={handleLogout} className="logout-button">
             Logout
           </button>

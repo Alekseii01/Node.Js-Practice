@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWebSocket } from '../../../context/WebSocketContext';
-import { FaBell, FaCheckCircle, FaEdit, FaTrash, FaPaperclip } from 'react-icons/fa';
+import { FaBell, FaCheckCircle, FaEdit, FaTrash, FaPaperclip, FaUserShield } from 'react-icons/fa';
 import './NotificationDisplay.css';
 
 function NotificationDisplay() {
@@ -55,6 +55,12 @@ function NotificationDisplay() {
           icon: <FaEdit className="notification-icon" />,
           title: 'Comment Updated',
           message: `A comment was updated.`
+        };
+      case 'user_role_updated':
+        return {
+          icon: <FaUserShield className="notification-icon" />,
+          title: 'Role Updated',
+          message: `Your role has been changed to "${notification.data.newRole}".`
         };
       default:
         return {

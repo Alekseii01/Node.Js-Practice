@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog';
 import WorkspaceSelector from '../WorkspaceSelector/WorkspaceSelector';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './ArticleList.css';
 
 function ArticleList() {
@@ -13,6 +14,7 @@ function ArticleList() {
   const [showDialog, setShowDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
+  const { canEditResource, user } = useAuth();
 
   const fetchArticles = async () => {
     try {
@@ -74,13 +76,17 @@ function ArticleList() {
                   {article.title}
                 </Link>
                 <div className="article-actions">
-                  <Link to={`/edit/${article.id}`} className="icon-link">
-                    <FaEdit className="icon edit-icon" />
-                  </Link>
-                  <FaTrash
-                    className="icon delete-icon"
-                    onClick={() => handleDeleteClick(article.id)}
-                  />
+                  {(article.created_by ? canEditResource(article.created_by) : user?.role === 'admin') && (
+                    <>
+                      <Link to={`/edit/${article.id}`} className="icon-link">
+                        <FaEdit className="icon edit-icon" />
+                      </Link>
+                      <FaTrash
+                        className="icon delete-icon"
+                        onClick={() => handleDeleteClick(article.id)}
+                      />
+                    </>
+                  )}
                 </div>
               </li>
             ))}

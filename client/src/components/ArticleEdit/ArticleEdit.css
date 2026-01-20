@@ -46,16 +46,16 @@ label {
 
 input[type="text"] {
   padding: 10px 12px;
-  border: 1.5px solid var(--border-main);
+  border: var(--border-width) solid var(--border-main);
   color: var(--text-main);
-  border-radius: 6px;
+  border-radius: var(--border-radius-small);
   font-size: 1em;
   background: var(--bg-light);
-  transition: border 0.15s;
+  transition: border var(--transition-hover);
 }
 
 input[type="text"]:focus {
-  border: 1.5px solid var(--main-color);
+  border: var(--border-width) solid var(--main-color);
   outline: none;
 }
 
@@ -72,14 +72,14 @@ input[type="text"]:focus {
   min-height: 220px;
   font-size: 1.08em;
   background: var(--bg-light);
-  border-radius: 0 0 6px 6px;
-  border: 1.5px solid var(--border-main);
+  border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
+  border: var(--border-width) solid var(--border-main);
   border-top: 0;
 }
 
 .ql-toolbar {
-  border-radius: 6px 6px 0 0;
-  border: 1.5px solid var(--border-main);
+  border-radius: var(--border-radius-small) var(--border-radius-small) 0 0;
+  border: var(--border-width) solid var(--border-main);
   background: var(--bg-grey);
 }
 
@@ -90,7 +90,7 @@ input[type="text"]:focus {
   background: var(--bg-danger);
   border-left: 4px solid var(--danger);
   padding: 8px 14px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-small);
 }
 
 .success-message {
@@ -100,7 +100,7 @@ input[type="text"]:focus {
   background: var(--bg-success);
   border-left: 4px solid var(--success);
   padding: 8px 14px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-small);
 }
 
 .required {

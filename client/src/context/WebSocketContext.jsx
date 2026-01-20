@@ -10,6 +10,22 @@ export function WebSocketProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const processedNotifications = useRef(new Set());
+  const eventHandlers = useRef(new Map());
+
+  const authenticateWs = useCallback((websocket) => {
+    const userStr = localStorage.getItem('user');
+    if (userStr && websocket.readyState === WebSocket.OPEN) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user && user.id) {
+          websocket.send(JSON.stringify({ type: 'auth', userId: user.id }));
+          console.log('WebSocket authenticated with userId:', user.id);
+        }
+      } catch (err) {
+        console.error('Failed to authenticate WebSocket:', err);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     globalConnectionCount++;
@@ -24,7 +40,7 @@ export function WebSocketProvider({ children }) {
       };
     }
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
     const wsUrl = apiUrl.replace(/^http/, 'ws');
 
     const websocket = new WebSocket(wsUrl);
@@ -32,6 +48,7 @@ export function WebSocketProvider({ children }) {
 
     websocket.onopen = () => {
       setIsConnected(true);
+      authenticateWs(websocket);
     };
 
     websocket.onmessage = (event) => {
@@ -50,6 +67,11 @@ export function WebSocketProvider({ children }) {
         const notificationWithId = { ...notification, id: notificationId };
         
         setNotifications(prev => [...prev, notificationWithId]);
+        
+        const handlers = eventHandlers.current.get(notification.type);
+        if (handlers) {
+          handlers.forEach(handler => handler(notification));
+        }
         
         setTimeout(() => {
           setNotifications(prev => prev.filter(n => n.id !== notificationId));
@@ -89,10 +111,44 @@ export function WebSocketProvider({ children }) {
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
+  const addListener = useCallback((eventType, handler) => {
+    const handlers = eventHandlers.current.get(eventType) || [];
+    handlers.push(handler);
+    eventHandlers.current.set(eventType, handlers);
+    
+    return () => {
+      const updatedHandlers = eventHandlers.current.get(eventType) || [];
+      const index = updatedHandlers.indexOf(handler);
+      if (index > -1) {
+        updatedHandlers.splice(index, 1);
+        if (updatedHandlers.length === 0) {
+          eventHandlers.current.delete(eventType);
+        } else {
+          eventHandlers.current.set(eventType, updatedHandlers);
+        }
+      }
+    };
+  }, []);
+
+  const removeListener = useCallback((eventType, handler) => {
+    const handlers = eventHandlers.current.get(eventType) || [];
+    const index = handlers.indexOf(handler);
+    if (index > -1) {
+      handlers.splice(index, 1);
+      if (handlers.length === 0) {
+        eventHandlers.current.delete(eventType);
+      } else {
+        eventHandlers.current.set(eventType, handlers);
+      }
+    }
+  }, []);
+
   const value = {
     isConnected,
     notifications,
-    removeNotification
+    removeNotification,
+    addListener,
+    removeListener
   };
 
   return (

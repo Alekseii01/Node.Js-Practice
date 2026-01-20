@@ -68,6 +68,13 @@ class ApiService {
     });
   }
 
+  static async patch(endpoint, data) {
+    return this.request(endpoint, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
   static async delete(endpoint) {
     return this.request(endpoint, { method: 'DELETE' });
   }
@@ -106,6 +113,10 @@ class ApiService {
       console.error('Upload failed:', error);
       throw error;
     }
+  }
+
+  static async getCurrentUser() {
+    return this.get('/auth/profile');
   }
 }
 

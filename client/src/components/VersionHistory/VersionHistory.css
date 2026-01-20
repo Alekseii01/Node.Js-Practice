@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,14 +22,14 @@
 }
 
 .version-history-content {
-  background: white;
-  border-radius: 12px;
+  background: var(--bg-white);
+  border-radius: var(--border-radius-main);
   width: 90%;
   max-width: 600px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-main);
   animation: slideUp 0.3s ease-out;
 }
 
@@ -46,7 +46,7 @@
 
 .version-history-header {
   padding: 20px 24px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: var(--border-width) solid var(--border-main);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -55,17 +55,14 @@
 .version-history-header h2 {
   margin: 0;
   font-size: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--main-color-dark);
 }
 
 .close-btn {
   background: none;
   border: none;
   font-size: 32px;
-  color: #999;
+  color: var(--text-muted);
   cursor: pointer;
   line-height: 1;
   padding: 0;
@@ -74,11 +71,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: color var(--transition-hover);
 }
 
 .close-btn:hover {
-  color: #333;
+  color: var(--text-main);
 }
 
 .version-list {
@@ -88,24 +85,24 @@
 }
 
 .version-item {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 8px;
+  background: var(--bg-grey);
+  border-radius: var(--border-radius-card);
   padding: 16px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-hover);
   border: 2px solid transparent;
 }
 
 .version-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .version-item.current {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-color: #667eea;
+  background: var(--main-color);
+  color: var(--text-light);
+  border-color: var(--main-color-dark);
 }
 
 .version-header {
@@ -159,9 +156,9 @@
 .no-versions {
   padding: 40px;
   text-align: center;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .version-error {
-  color: #e74c3c;
+  color: var(--danger);
 }
