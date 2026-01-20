@@ -8,7 +8,8 @@ const {
   getAllArticleIds,
   getArticleVersions,
   getArticleVersion,
-  isAttachmentReferencedByVersions
+  isAttachmentReferencedByVersions,
+  searchArticles
 } = require('./service');
 const { broadcastNotification } = require('../websocket/notificationService');
 
@@ -279,6 +280,22 @@ async function getArticleByVersion(req, res) {
   }
 }
 
+async function search(req, res) {
+  try {
+    const { q, workspace_id } = req.query;
+    
+    if (!q || q.trim() === '') {
+      return res.status(400).json({ message: 'Search query is required.' });
+    }
+    
+    const articles = await searchArticles(q.trim(), workspace_id || null);
+    res.json(articles);
+  } catch (error) {
+    console.error('Error searching articles:', error);
+    res.status(500).json({ message: 'Failed to search articles.' });
+  }
+}
+
 module.exports = {
   getAllArticles,
   getArticleById,
@@ -288,5 +305,6 @@ module.exports = {
   uploadAttachment,
   deleteAttachment,
   getArticleVersionsHistory,
-  getArticleByVersion
+  getArticleByVersion,
+  search
 };

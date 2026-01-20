@@ -44,7 +44,7 @@ label {
   margin-bottom: 2px;
 }
 
-input[type="text"] {
+.text-input {
   padding: 10px 12px;
   border: var(--border-width) solid var(--border-main);
   color: var(--text-main);
@@ -54,7 +54,7 @@ input[type="text"] {
   transition: border var(--transition-hover);
 }
 
-input[type="text"]:focus {
+.text-input:focus {
   border: var(--border-width) solid var(--main-color);
   outline: none;
 }
