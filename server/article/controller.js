@@ -1,7 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs/promises');
-const { Article } = require('../models/associations');
 const {
   readArticleFile,
   writeArticleFile,
@@ -107,19 +106,7 @@ async function updateArticle(req, res) {
   }
 
   try {
-    const existingArticle = await readArticleFile(id);
-    if (!existingArticle) {
-      return res.status(404).json({ message: 'Article not found.' });
-    }
-
-    let articleOwner = existingArticle.created_by;
-    if (!existingArticle.created_by) {
-      articleOwner = req.user.id;
-    }
-
-    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
-      return res.status(403).json({ message: 'Access denied. You can only edit your own articles.' });
-    }
+    const existingArticle = req.resource;
 
     const updatedArticle = {
       id,
@@ -127,7 +114,7 @@ async function updateArticle(req, res) {
       content: content.trim(),
       attachments: existingArticle.attachments || [],
       workspace_id: workspace_id !== undefined ? workspace_id : existingArticle.workspace_id,
-      created_by: articleOwner
+      created_by: existingArticle.created_by || req.user.id
     };
 
     await writeArticleFile(id, updatedArticle);
@@ -152,21 +139,7 @@ async function deleteArticle(req, res) {
   const { id } = req.params;
 
   try {
-    const existingArticle = await readArticleFile(id);
-    if (!existingArticle) {
-      return res.status(404).json({ message: 'Article not found.' });
-    }
-
-    let articleOwner = existingArticle.created_by;
-    if (!existingArticle.created_by) {
-      articleOwner = req.user.id;
-      await Article.update({ created_by: articleOwner }, { where: { id } });
-    }
-
-    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
-      return res.status(403).json({ message: 'Access denied. You can only delete your own articles.' });
-    }
-
+    // Article is already loaded and authorization checked by middleware
     const deleted = await deleteArticleFile(id);
     if (!deleted) {
       return res.status(404).json({ message: 'Article not found.' });
@@ -189,22 +162,7 @@ async function uploadAttachment(req, res) {
   }
 
   try {
-    const article = await readArticleFile(id);
-    if (!article) {
-      await fs.unlink(req.file.path);
-      return res.status(404).json({ message: 'Article not found.' });
-    }
-
-    let articleOwner = article.created_by;
-    if (!article.created_by) {
-      articleOwner = req.user.id;
-      await Article.update({ created_by: articleOwner }, { where: { id } });
-    }
-
-    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
-      await fs.unlink(req.file.path);
-      return res.status(403).json({ message: 'Access denied. You can only modify your own articles.' });
-    }
+    const article = req.resource;
 
     const attachment = {
       filename: req.file.filename,
@@ -244,20 +202,7 @@ async function deleteAttachment(req, res) {
   const { id, filename } = req.params;
 
   try {
-    const article = await readArticleFile(id);
-    if (!article) {
-      return res.status(404).json({ message: 'Article not found.' });
-    }
-
-    let articleOwner = article.created_by;
-    if (!article.created_by) {
-      articleOwner = req.user.id;
-      await Article.update({ created_by: articleOwner }, { where: { id } });
-    }
-
-    if (req.user.role !== 'admin' && parseInt(articleOwner) !== parseInt(req.user.id)) {
-      return res.status(403).json({ message: 'Access denied. You can only modify your own articles.' });
-    }
+    const article = req.resource;
 
     if (!article.attachments || article.attachments.length === 0) {
       return res.status(404).json({ message: 'No attachments found.' });

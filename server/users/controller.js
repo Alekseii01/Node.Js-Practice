@@ -1,5 +1,6 @@
 const { User } = require('../models/associations');
 const { sendToUser } = require('../websocket/notificationService');
+const { USER_ROLES } = require('../constants');
 
 async function getAllUsers(req, res) {
   try {
@@ -38,11 +39,12 @@ async function updateUserRole(req, res) {
     const { id } = req.params;
     const { role } = req.body;
     
-    if (!role || !['admin', 'user'].includes(role)) {
-      return res.status(400).json({ message: 'Valid role (admin or user) is required' });
+    const validRoles = Object.values(USER_ROLES);
+    if (!role || !validRoles.includes(role)) {
+      return res.status(400).json({ message: `Valid role (${validRoles.join(' or ')}) is required` });
     }
     
-    if (id === req.user.id && role === 'user') {
+    if (id === req.user.id && role === USER_ROLES.USER) {
       return res.status(400).json({ message: 'You cannot change your own role' });
     }
     

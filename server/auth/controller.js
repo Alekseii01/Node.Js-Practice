@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/associations');
-const { MIN_PASSWORD_LENGTH } = require('../constants');
+const { MIN_PASSWORD_LENGTH, DEFAULT_USER_ROLE } = require('../constants');
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
@@ -8,8 +8,8 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
 }
 
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+const generateToken = (userId, role) => {
+  return jwt.sign({ userId, role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 };
 
 async function register(req, res) {
@@ -29,18 +29,15 @@ async function register(req, res) {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
-    const userCount = await User.count();
-    const isFirstUser = userCount === 0;
-
     const user = await User.create({
       email,
       password,
       firstName,
       lastName,
-      role: isFirstUser ? 'admin' : 'user'
+      role: DEFAULT_USER_ROLE
     });
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, user.role);
 
     res.status(201).json({
       message: 'User created successfully',
@@ -87,7 +84,7 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, user.role);
 
     res.json({
       message: 'Login successful',
