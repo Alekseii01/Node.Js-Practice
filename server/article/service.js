@@ -1,4 +1,4 @@
-const { Article, Comment, ArticleVersion } = require('../models/associations');
+const { Article, Comment, ArticleVersion, User } = require('../models/associations');
 const { Op } = require('sequelize');
 
 async function ensureDataDirectory() {
@@ -39,7 +39,7 @@ async function readArticleFile(id) {
       }, {
         model: User,
         as: 'author',
-        attributes: ['id', 'username']
+        attributes: ['id', 'firstName', 'lastName', 'email']
       }]
     });
     if (!article) {

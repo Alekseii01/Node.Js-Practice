@@ -141,7 +141,6 @@ async function deleteArticle(req, res) {
   const { id } = req.params;
 
   try {
-    // Article is already loaded and authorization checked by middleware
     const deleted = await deleteArticleFile(id);
     if (!deleted) {
       return res.status(404).json({ message: 'Article not found.' });
@@ -305,33 +304,26 @@ async function exportArticleAsPDF(req, res) {
       return res.status(404).json({ message: 'Article not found.' });
     }
 
-    // Create a new PDF document
     const doc = new PDFDocument();
     
-    // Set response headers for PDF download
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${article.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf"`);
     
-    // Pipe the PDF to the response
     doc.pipe(res);
     
-    // Add title
     doc.fontSize(24).text(article.title, { align: 'center' });
     doc.moveDown();
     
-    // Add metadata
-    doc.fontSize(12).text(`Created: ${new Date(article.created_at).toLocaleDateString()}`, { align: 'left' });
-    if (article.author && article.author.username) {
-      doc.text(`Author: ${article.author.username}`, { align: 'left' });
+    // doc.fontSize(12).text(`Created: ${new Date(article.createdAt).toLocaleDateString()}`, { align: 'left' });
+    if (article.author) {
+      const authorName = [article.author.firstName, article.author.lastName].filter(Boolean).join(' ') || article.author.email;
+      doc.text(`Author: ${authorName}`, { align: 'left' });
     }
     doc.moveDown();
     
-    // Add content
-    // Remove HTML tags for plain text
     const plainContent = article.content.replace(/<[^>]*>/g, '');
     doc.fontSize(14).text(plainContent, { align: 'left' });
     
-    // Finalize the PDF
     doc.end();
   } catch (error) {
     console.error(`Error exporting article ${id} as PDF:`, error);
