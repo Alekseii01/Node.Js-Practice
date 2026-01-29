@@ -50,6 +50,14 @@
   color: var(--main-color-dark);
 }
 
+.download-icon {
+  color: var(--success);
+}
+
+.download-icon:hover {
+  color: var(--success-dark);
+}
+
 .old-version-banner {
   background: linear-gradient(135deg, var(--warning-light) 0%, var(--warning) 100%);
   border-radius: var(--border-radius-card);

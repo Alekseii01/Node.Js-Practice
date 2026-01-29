@@ -36,6 +36,10 @@ async function readArticleFile(id) {
         as: 'comments',
         attributes: ['id', 'content', 'author', 'created_at', 'updated_at'],
         order: [['created_at', 'DESC']]
+      }, {
+        model: User,
+        as: 'author',
+        attributes: ['id', 'username']
       }]
     });
     if (!article) {

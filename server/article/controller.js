@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs/promises');
+const PDFDocument = require('pdfkit');
 const {
   readArticleFile,
   writeArticleFile,
@@ -296,6 +297,48 @@ async function search(req, res) {
   }
 }
 
+async function exportArticleAsPDF(req, res) {
+  const { id } = req.params;
+  try {
+    const article = await readArticleFile(id);
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found.' });
+    }
+
+    // Create a new PDF document
+    const doc = new PDFDocument();
+    
+    // Set response headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${article.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf"`);
+    
+    // Pipe the PDF to the response
+    doc.pipe(res);
+    
+    // Add title
+    doc.fontSize(24).text(article.title, { align: 'center' });
+    doc.moveDown();
+    
+    // Add metadata
+    doc.fontSize(12).text(`Created: ${new Date(article.created_at).toLocaleDateString()}`, { align: 'left' });
+    if (article.author && article.author.username) {
+      doc.text(`Author: ${article.author.username}`, { align: 'left' });
+    }
+    doc.moveDown();
+    
+    // Add content
+    // Remove HTML tags for plain text
+    const plainContent = article.content.replace(/<[^>]*>/g, '');
+    doc.fontSize(14).text(plainContent, { align: 'left' });
+    
+    // Finalize the PDF
+    doc.end();
+  } catch (error) {
+    console.error(`Error exporting article ${id} as PDF:`, error);
+    res.status(500).json({ message: 'Failed to export article as PDF.' });
+  }
+}
+
 module.exports = {
   getAllArticles,
   getArticleById,
@@ -306,5 +349,6 @@ module.exports = {
   deleteAttachment,
   getArticleVersionsHistory,
   getArticleByVersion,
-  search
+  search,
+  exportArticleAsPDF
 };

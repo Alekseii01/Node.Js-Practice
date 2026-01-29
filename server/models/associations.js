@@ -43,6 +43,16 @@ ArticleVersion.belongsTo(Workspace, {
   as: 'workspace'
 });
 
+Article.belongsTo(User, {
+  foreignKey: 'created_by',
+  as: 'author'
+});
+
+User.hasMany(Article, {
+  foreignKey: 'created_by',
+  as: 'articles'
+});
+
 module.exports = {
   sequelize,
   Article,
