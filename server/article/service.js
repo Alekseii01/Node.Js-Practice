@@ -1,4 +1,5 @@
 const { Article, Comment, ArticleVersion } = require('../models/associations');
+const { Op } = require('sequelize');
 
 async function ensureDataDirectory() {
   console.log('Using PostgreSQL database for article storage.');
@@ -153,6 +154,31 @@ async function isAttachmentReferencedByVersions(articleId, filename) {
   }
 }
 
+async function searchArticles(searchQuery, workspaceId = null) {
+  try {
+    const whereConditions = {
+      [Op.or]: [
+        { title: { [Op.iLike]: `%${searchQuery}%` } },
+        { content: { [Op.iLike]: `%${searchQuery}%` } }
+      ]
+    };
+    
+    if (workspaceId) {
+      whereConditions.workspace_id = workspaceId;
+    }
+    
+    const articles = await Article.findAll({
+      where: whereConditions,
+      attributes: ['id', 'title', 'workspace_id', 'created_by'],
+      order: [['updated_at', 'DESC']]
+    });
+    
+    return articles.map(article => article.toJSON());
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   ensureDataDirectory,
   readArticleFile,
@@ -162,5 +188,6 @@ module.exports = {
   createArticleVersion,
   getArticleVersions,
   getArticleVersion,
-  isAttachmentReferencedByVersions
+  isAttachmentReferencedByVersions,
+  searchArticles
 };

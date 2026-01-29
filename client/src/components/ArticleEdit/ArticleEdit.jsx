@@ -145,7 +145,7 @@ function ArticleEdit() {
             id="title"
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className={errors.title ? 'error' : ''}
+            className={`text-input ${errors.title ? 'error' : ''}`}
           />
           {errors.title && <p className="field-error">Title is required.</p>}
         </div>

@@ -8,7 +8,8 @@ const {
   uploadAttachment,
   deleteAttachment,
   getArticleVersionsHistory,
-  getArticleByVersion
+  getArticleByVersion,
+  search
 } = require('./controller');
 const { readArticleFile } = require('./service');
 const upload = require('../middleware/upload');
@@ -33,6 +34,7 @@ const loadArticle = async (req, res, next) => {
   }
 };
 
+router.get('/search', search);
 router.get('/', getAllArticles);
 router.get('/:id', getArticleById);
 router.get('/:id/versions', getArticleVersionsHistory);
