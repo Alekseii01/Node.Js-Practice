@@ -138,6 +138,7 @@ npm run migration:generate -- <migration-name>
 - **Comments**: Add comments to articles with author names
 - **Workspaces**: Organize articles in workspaces, filter articles by workspace
 - **File Attachments**: Upload and manage files for articles (images, PDFs)
+- **PDF Export**: Export articles as PDF files with title, content, and metadata (creation date, author)
 - **User Management**: 
   - Admin panel for viewing all users
   - Role switching (admin ↔ user) with real-time UI updates via WebSocket
@@ -166,6 +167,7 @@ npm run migration:generate -- <migration-name>
 - `DELETE /articles/:id` - Delete article - requires ownership or admin role
 - `POST /articles/:id/attachments` - Upload file - requires ownership or admin role
 - `DELETE /articles/:id/attachments/:filename` - Delete file - requires ownership or admin role
+- `GET /articles/:id/export/pdf` - Export article as PDF file
 
 ### Comments
 - `GET /articles/:articleId/comments` - Get all comments for an article

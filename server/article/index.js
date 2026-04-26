@@ -9,7 +9,8 @@ const {
   deleteAttachment,
   getArticleVersionsHistory,
   getArticleByVersion,
-  search
+  search,
+  exportArticleAsPDF
 } = require('./controller');
 const { readArticleFile } = require('./service');
 const upload = require('../middleware/upload');
@@ -39,6 +40,7 @@ router.get('/', getAllArticles);
 router.get('/:id', getArticleById);
 router.get('/:id/versions', getArticleVersionsHistory);
 router.get('/:id/versions/:versionNumber', getArticleByVersion);
+router.get('/:id/export/pdf', exportArticleAsPDF);
 router.post('/', authenticateToken, createArticle);
 router.put('/:id', authenticateToken, loadArticle, requireResourceAccess('created_by'), updateArticle);
 router.delete('/:id', authenticateToken, loadArticle, requireResourceAccess('created_by'), deleteArticle);

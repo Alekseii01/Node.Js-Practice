@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../ui/Button/Button.jsx';
 import ApiService from '../../utils/apiService.js';
+import { API_BASE_URL } from '../../utils/constants.js';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { FaEdit, FaTrash, FaHistory } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaHistory, FaDownload } from 'react-icons/fa';
 import ConfirmationDialog from '../ui/ConfirmationDialog/ConfirmationDialog.jsx';
 import AttachmentManager from '../ui/AttachmentManager/AttachmentManager.jsx';
 import CommentList from '../CommentList/CommentList.jsx';
@@ -135,6 +136,16 @@ function ArticleView() {
     setSearchParams({});
   };
 
+  const handleExportPDF = () => {
+    const url = `${API_BASE_URL}/articles/${id}/export/pdf`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${article.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (error) {
     return (
       <div className="container">
@@ -184,6 +195,11 @@ function ArticleView() {
             className="icon history-icon"
             onClick={handleViewHistory}
             title="View version history"
+          />
+          <FaDownload
+            className="icon download-icon"
+            onClick={handleExportPDF}
+            title="Export as PDF"
           />
         </div>
       </div>
